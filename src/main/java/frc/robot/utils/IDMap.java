@@ -1,6 +1,12 @@
 package frc.robot.utils;
 
+/**
+ * Holds all of the Ids like CAN, pneumatic hub, and DIO devices
+ */
 public class IDMap {
+    /**
+     * CAN Ids
+     */
     public enum CAN {
         // Drivetrain
         leftFront(1),
@@ -20,6 +26,9 @@ public class IDMap {
         }
     }
 
+    /**
+     * Pneumatic hub ports for solenoids
+     */
     public enum Pneumatics {
         // Manipulator
         claw(1),
