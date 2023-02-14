@@ -77,8 +77,8 @@ public class Drivetrain extends SubsystemBase{
 
 
         // Drive Encoders
-        leftDriveEncoder = leftFront.getEncoder();
-        rightDriveEncoder = rightFront.getEncoder();
+        leftDriveEncoder = leftFront.getAlternateEncoder(8192);
+        rightDriveEncoder = rightFront.getAlternateEncoder(8192);
         resetEncoders();
 
         // Gyro
