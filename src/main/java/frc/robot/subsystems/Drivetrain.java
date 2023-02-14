@@ -41,7 +41,7 @@ public class Drivetrain extends SubsystemBase{
 
     // Utils
     private final DifferentialDrive differentialDrive;
-    private final SlewRateLimiter throttleLimiter, turnLimiter;
+    private final SlewRateLimiter throttleLimiter;
     private final DifferentialDriveOdometry odometry;
     private final Field2d field;
     private final DifferentialDrivePoseEstimator poseEstimator;
@@ -91,7 +91,6 @@ public class Drivetrain extends SubsystemBase{
         // Odometry
         differentialDrive = new DifferentialDrive(leftFront, rightFront);
         throttleLimiter = new SlewRateLimiter(Constants.Drivetrain.throttleLimiter);
-        turnLimiter = new SlewRateLimiter(Constants.Drivetrain.turnLimiter);
         odometry = new DifferentialDriveOdometry(getGyroRotation2d(), getLeftDistanceMeters(), getRightDistanceMeters());
         poseEstimator = new DifferentialDrivePoseEstimator(
             Constants.Drivetrain.driveKinematics,
