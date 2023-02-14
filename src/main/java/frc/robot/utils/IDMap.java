@@ -42,4 +42,30 @@ public class IDMap {
             port = p;
         }
     }
+
+    public enum DIO {
+        // Drivetrain
+        leftDriveEncoderA(0),
+        leftDriveEncoderB(1),
+        rightDriveEncoderA(2),
+        rightDriveEncoderB(3),
+
+        // Pivot
+        pivotEncoderA(4),
+        pivotEncoderB(5),
+        pivotForwardLimit(6),
+        pivotReverseLimit(7),
+
+        // Arm
+        armEncoderA(8),
+        armEncoderB(9),
+        armForawrdLimit(10),
+        armReverseLimit(11);
+
+        public final int port;
+        private DIO(int p) {
+            port = p;
+        }
+
+    }
 }
