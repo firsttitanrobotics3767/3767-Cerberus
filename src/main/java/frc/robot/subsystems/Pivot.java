@@ -10,10 +10,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Encoder;
-
+import frc.robot.utils.Dashboard;
 // Utils
 import frc.robot.utils.IDMap;
 
+/** The rotation of the arm */
 public class Pivot extends SubsystemBase{
     // Devices
     /** Drive motor for the pivot. Positive values will raise the arm. */
@@ -41,14 +42,22 @@ public class Pivot extends SubsystemBase{
 
     @Override
     public void periodic() {
-
+        setPivotDashboard();
     }
 
-    //TODO: position control
+    // TODO: position control
 
     // Motor methods
     public void setPivotSpeed(double speed) {
         pivotMotor.set(speed);
+    }
+
+    public void setPivotVolts(double volts) {
+        pivotMotor.setVoltage(volts);
+    }
+
+    public void setPivotDashboard() {
+        pivotMotor.set(Dashboard.pivotSpeed.get());
     }
 
     // Encoder methods
@@ -60,7 +69,7 @@ public class Pivot extends SubsystemBase{
         return pivotEncoder.getRate();
     }
 
-    public void resetPivot() {
+    public void resetPivotEncoder() {
         pivotEncoder.reset();
     }
 

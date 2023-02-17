@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Dashboard {
 
-    
+    public static final Entry<Double> 
+        pivotSpeed = Entry.getDoubleEntry("Pivot Speed", 0),
+        armSpeed = Entry.getDoubleEntry("Arm Speed", 0);
         
 
     public Dashboard() {}
