@@ -31,12 +31,16 @@ public class IDMap {
      */
     public enum Pneumatics {
         // Manipulator
-        claw(1),
-        wrist(2),
+        clawOpen(15),
+        clawClose(6),
+
+        wristUp(7),
+        wristDown(14),
 
         // cone driver
-        coneDriver(3);
+        coneDriverForward(0),
 
+        coneDriverReverse(1);
         public final int port;
         private Pneumatics(int p) {
             port = p;
