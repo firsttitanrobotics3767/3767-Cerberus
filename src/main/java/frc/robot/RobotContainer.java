@@ -3,7 +3,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.Arm.setArmSpeed;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
+import frc.robot.commands.Pivot.setPivotSpeed;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -19,9 +21,9 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    pivot.run(() -> pivot.setPivotSpeed(operator.getRawAxis(1) / 10));
-    arm.run(() -> arm.setArmSpeed(operator.getRawAxis(5) / 10));
-    drivetrain.setDefaultCommand(new ArcadeDrive(() -> driver.getRawAxis(1), () -> driver.getRawAxis(2), drivetrain));
+    pivot.setDefaultCommand(new setPivotSpeed(() -> operator.getRawAxis(1), pivot));
+    arm.setDefaultCommand(new setArmSpeed(() -> operator.getRawAxis(5), arm));
+    drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
   }
 
   private void configureBindings() {

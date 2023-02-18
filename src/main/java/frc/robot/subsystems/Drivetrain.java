@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Utils
@@ -83,7 +84,7 @@ public class Drivetrain extends SubsystemBase{
 
         // Gyro
         gyro = new AHRS();
-        gyro.reset();
+        // gyro.reset();
 
         // Camera
         camera = new PhotonCamera(Constants.cameraName);
@@ -97,7 +98,7 @@ public class Drivetrain extends SubsystemBase{
             getGyroRotation2d(),
             0,
             0,
-            null);
+            new Pose2d());
         
         // Field
         field = new Field2d();
@@ -107,6 +108,11 @@ public class Drivetrain extends SubsystemBase{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Gyro rotation", gyro.getYaw());
     }
 
     // Drive methods
