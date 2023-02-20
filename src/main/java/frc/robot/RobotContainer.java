@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Arm.setArmSpeed;
+import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
-import frc.robot.commands.Pivot.setPivotSpeed;
+import frc.robot.commands.Pivot.supplyPivotSpeed;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Manipulator;
@@ -25,17 +25,17 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    pivot.setDefaultCommand(new setPivotSpeed(() -> operator.getRawAxis(1), pivot));
-    // arm.setDefaultCommand(new setArmSpeed(() -> operator.getRawAxis(5), arm));
-    // drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
+    pivot.setDefaultCommand(new supplyPivotSpeed(() -> -operator.getRawAxis(1), pivot));
+    arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
+    drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
   }
 
   private void configureBindings() {
-    // JoystickButton openPincher = new JoystickButton(operator, 1);
-    // JoystickButton closePincher = new JoystickButton(operator, 3);
+    JoystickButton togglePincher = new JoystickButton(operator, 1);
+    JoystickButton toggleWrist = new JoystickButton(operator, 3);
 
-    // openPincher.onTrue(new InstantCommand(() -> manipulator.openPincher()));
-    // closePincher.onTrue(new InstantCommand(() -> manipulator.closePincher()));
+    togglePincher.onTrue(new InstantCommand(() -> manipulator.togglePincher()));
+    toggleWrist.onTrue(new InstantCommand(() -> manipulator.toggleWrist()));
   }
 
   public Command getAutonomousCommand() {

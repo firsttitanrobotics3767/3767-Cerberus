@@ -20,6 +20,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -83,7 +84,7 @@ public class Drivetrain extends SubsystemBase{
         resetEncoders();
 
         // Gyro
-        gyro = new AHRS();
+        gyro = new AHRS(SerialPort.Port.kUSB1);
         // gyro.reset();
 
         // Camera

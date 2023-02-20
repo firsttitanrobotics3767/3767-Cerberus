@@ -31,8 +31,8 @@ public class IDMap {
      */
     public enum Pneumatics {
         // Manipulator
-        clawOpen(15),
-        clawClose(6),
+        openPincher(15),
+        closePincher(6),
 
         wristUp(7),
         wristDown(14),
