@@ -2,14 +2,15 @@ package frc.robot.subsystems;
 
 // Vendor Libraries
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.Dashboard;
 // Utils
 import frc.robot.utils.IDMap;
@@ -22,7 +23,8 @@ public class Pivot extends SubsystemBase{
     /** Pivot encoder. Mounted directly to the axle, plugged into DIO on Rio. */
     private final Encoder pivotEncoder;
     /** Forward and reverse limit switches for the pivot. Connected to motor controller */
-    public final SparkMaxLimitSwitch forwardLimitSwitch, reverseLimitSwitch;
+    public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
+    public Boolean limitSwitchesEnabled = true;
 
     public Pivot() {
 
@@ -36,13 +38,14 @@ public class Pivot extends SubsystemBase{
         pivotEncoder = new Encoder(IDMap.DIO.pivotEncoderA.port, IDMap.DIO.pivotEncoderB.port);
 
         // Pivot Limit Switches
-        forwardLimitSwitch = pivotMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-        reverseLimitSwitch = pivotMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
+        reverseLimitSwitch = new DigitalInput(IDMap.DIO.pivotReverseLimit.port);
     }
 
     @Override
     public void periodic() {
-        setPivotDashboard();
+        SmartDashboard.putBoolean("port " + forwardLimitSwitch.getChannel(), forwardLimitSwitch.get());
+        SmartDashboard.putBoolean("port " + reverseLimitSwitch.getChannel(), reverseLimitSwitch.get());
     }
 
     // TODO: position control
@@ -85,7 +88,6 @@ public class Pivot extends SubsystemBase{
     }
 
     public void enableLimitSwitches(boolean enabled) {
-        forwardLimitSwitch.enableLimitSwitch(enabled);
-        reverseLimitSwitch.enableLimitSwitch(enabled);
+        limitSwitchesEnabled = enabled;
     }    
 }

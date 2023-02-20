@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 // WPILib
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Utils
@@ -40,7 +41,8 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        SmartDashboard.putBoolean("port " + forwardLimitSwitch.getChannel(), forwardLimitSwitch.get());
+        SmartDashboard.putBoolean("port " + reverseLimitSwitch.getChannel(), reverseLimitSwitch.get());
     }
 
     // TODO: position control
