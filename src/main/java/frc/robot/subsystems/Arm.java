@@ -2,13 +2,13 @@ package frc.robot.subsystems;
 
 // Vendor libraries
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 // WPILib
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,7 +20,7 @@ import frc.robot.utils.IDMap;
 public class Arm extends SubsystemBase {
     /** Extension motor. Positive values will extend. */
     private final CANSparkMax armMotor;
-    private final Encoder armEncoder;
+    private final RelativeEncoder armEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
 
@@ -32,7 +32,7 @@ public class Arm extends SubsystemBase {
         armMotor.setInverted(true);
 
         // Arm encoder
-        armEncoder = new Encoder(IDMap.DIO.armEncoderA.port, IDMap.DIO.armEncoderB.port);
+        armEncoder = armMotor.getEncoder();
 
         // Arm limit switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.armForawrdLimit.port);
@@ -62,6 +62,7 @@ public class Arm extends SubsystemBase {
         } else {
             armMotor.set(speed);
         }
+        SmartDashboard.putNumber("Arm Traget Speed", speed);
     }
 
     public void setArmVolts(double volts) {
@@ -74,15 +75,15 @@ public class Arm extends SubsystemBase {
 
     // Encoder methods
     public double getArmPosition() {
-        return armEncoder.getDistance();
+        return armEncoder.getPosition();
     }
 
     public double getArmRate() {
-        return armEncoder.getRate();
+        return armEncoder.getVelocity();
     }
 
     public void resetArmEncoder() {
-        armEncoder.reset();
+        armEncoder.setPosition(0);
     }
 
     // Limtis

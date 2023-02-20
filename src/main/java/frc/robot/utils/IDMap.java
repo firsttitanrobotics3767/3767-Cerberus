@@ -55,16 +55,12 @@ public class IDMap {
         rightDriveEncoderB(3),
 
         // Pivot
-        pivotEncoderA(4),
-        pivotEncoderB(5),
         pivotForwardLimit(6),
-        pivotReverseLimit(7),
+        pivotReverseLimit(5),
 
         // Arm
-        armEncoderA(8),
-        armEncoderB(9),
-        armForawrdLimit(10),
-        armReverseLimit(11);
+        armForawrdLimit(4),
+        armReverseLimit(7);
 
         public final int port;
         private DIO(int p) {

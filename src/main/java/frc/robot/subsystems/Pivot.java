@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 // Vendor Libraries
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -9,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.Dashboard;
 // Utils
@@ -20,8 +20,8 @@ public class Pivot extends SubsystemBase{
     // Devices
     /** Drive motor for the pivot. Positive values will raise the arm. */
     private final CANSparkMax pivotMotor;
-    /** Pivot encoder. Mounted directly to the axle, plugged into DIO on Rio. */
-    private final Encoder pivotEncoder;
+    /** Pivot encoder. Mounted directly to the axle, plugged into SPARK Max. */
+    private final RelativeEncoder pivotEncoder;
     /** Forward and reverse limit switches for the pivot. Connected to motor controller */
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
@@ -35,7 +35,7 @@ public class Pivot extends SubsystemBase{
         pivotMotor.setInverted(true);
 
         // Pivot Encoder
-        pivotEncoder = new Encoder(IDMap.DIO.pivotEncoderA.port, IDMap.DIO.pivotEncoderB.port);
+        pivotEncoder = pivotMotor.getEncoder();
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
@@ -52,7 +52,20 @@ public class Pivot extends SubsystemBase{
 
     // Motor methods
     public void setPivotSpeed(double speed) {
-        pivotMotor.set(speed);
+        if (limitSwitchesEnabled) {
+            if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
+                if (forwardLimitSwitch.get() && speed < 0) {
+                    pivotMotor.set(speed);
+                } else if (reverseLimitSwitch.get() && speed > 0) {
+                    pivotMotor.set(speed);
+                } else {pivotMotor.set(0);}
+            } else {
+                pivotMotor.set(speed);
+            }
+        } else {
+            pivotMotor.set(speed);
+        }
+        SmartDashboard.putNumber("Pivot Traget Speed", speed);
     }
 
     public void setPivotVolts(double volts) {
@@ -65,15 +78,15 @@ public class Pivot extends SubsystemBase{
 
     // Encoder methods
     public double getPivotPosition() {
-        return pivotEncoder.getDistance();
+        return pivotEncoder.getPosition();
     }
 
     public double getPivotRate() {
-        return pivotEncoder.getRate();
+        return pivotEncoder.getVelocity();
     }
 
     public void resetPivotEncoder() {
-        pivotEncoder.reset();
+        pivotEncoder.setPosition(0);
     }
 
     // Limits

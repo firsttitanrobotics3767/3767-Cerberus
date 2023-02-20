@@ -5,11 +5,11 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 
-public class supplyArmSpeed extends CommandBase{
+public class SupplyArmSpeed extends CommandBase{
     private final Arm arm;
     private final Supplier<Double> speed;
 
-    public supplyArmSpeed(Supplier<Double> speed, Arm arm) {
+    public SupplyArmSpeed(Supplier<Double> speed, Arm arm) {
         this.speed = speed;
         this.arm = arm;
         addRequirements(arm);
