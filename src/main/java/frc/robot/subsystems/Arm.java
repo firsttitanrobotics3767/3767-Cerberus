@@ -2,11 +2,11 @@ package frc.robot.subsystems;
 
 // Vendor libraries
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 // WPILib
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,7 +20,8 @@ public class Arm extends SubsystemBase {
     /** Extension motor. Positive values will extend. */
     private final CANSparkMax armMotor;
     private final Encoder armEncoder;
-    public final SparkMaxLimitSwitch forwardLimitSwitch, reverseLimitSwitch;
+    public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
+    public Boolean limitSwitchesEnabled = true;
 
     public Arm() {
         // Arm motor
@@ -33,8 +34,8 @@ public class Arm extends SubsystemBase {
         armEncoder = new Encoder(IDMap.DIO.armEncoderA.port, IDMap.DIO.armEncoderB.port);
 
         // Arm limit switches
-        forwardLimitSwitch = armMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
-        reverseLimitSwitch = armMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
+        forwardLimitSwitch = new DigitalInput(IDMap.DIO.armForawrdLimit.port);
+        reverseLimitSwitch = new DigitalInput(IDMap.DIO.armReverseLimit.port);
     }
 
     @Override
@@ -46,7 +47,19 @@ public class Arm extends SubsystemBase {
 
     // Motor methods
     public void setArmSpeed(double speed) {
-        armMotor.set(speed);
+        if (limitSwitchesEnabled) {
+            if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
+                if (forwardLimitSwitch.get() && speed < 0) {
+                    armMotor.set(speed);
+                } else if (reverseLimitSwitch.get() && speed > 0) {
+                    armMotor.set(speed);
+                } else {armMotor.set(0);}
+            } else {
+                armMotor.set(speed);
+            }
+        } else {
+            armMotor.set(speed);
+        }
     }
 
     public void setArmVolts(double volts) {
@@ -95,8 +108,7 @@ public class Arm extends SubsystemBase {
      * @param enabled set true to enable limti switch stops (enabled by default)
      */
     public void enableLimitSwitches(boolean enabled) {
-        forwardLimitSwitch.enableLimitSwitch(enabled);
-        reverseLimitSwitch.enableLimitSwitch(enabled);
+        limitSwitchesEnabled = enabled;
     }
 
 }
