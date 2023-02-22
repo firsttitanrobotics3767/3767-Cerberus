@@ -9,7 +9,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
 // Utils
@@ -22,13 +24,14 @@ public class Pivot extends SubsystemBase{
     private final RelativeEncoder pivotEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
-    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition;
-    public final ArmFeedforward feedForwardController;
+    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage;
+    public double setpoint = 0;
 
     public Pivot() {
 
         pivotSpeed = Dashboard.Entry.getDoubleEntry("Pivot Speed", 0);
         pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);
+        pivotVoltage = Dashboard.Entry.getDoubleEntry("Pivot Voltage", 0);
 
         // Pivot motor
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
@@ -38,10 +41,13 @@ public class Pivot extends SubsystemBase{
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
+        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
         reverseLimitSwitch = new DigitalInput(IDMap.DIO.pivotReverseLimit.port);
+
+
     }
 
     @Override
@@ -69,8 +75,25 @@ public class Pivot extends SubsystemBase{
         pivotSpeed.put(speed);
     }
 
-    public void setPivotVolts(double volts) {
-        pivotMotor.setVoltage(volts);
+    public void positionArm(double speed) {
+        setpoint += speed;
+        double error = setpoint - pivotEncoder.getPosition();
+        double gravityCompensation = Constants.Pivot.kG * Math.cos(pivotEncoder.getPosition());
+        double volts = (Constants.Pivot.kP * error) + gravityCompensation;
+        if (limitSwitchesEnabled) {
+            if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
+                if (forwardLimitSwitch.get() && volts < 0) {
+                    pivotMotor.setVoltage(volts);
+                } else if (reverseLimitSwitch.get() && volts > 0) {
+                    pivotMotor.setVoltage(volts);
+                } else {pivotMotor.setVoltage(0);}
+            } else {
+                pivotMotor.setVoltage(volts);
+            }
+        } else {
+            pivotMotor.setVoltage(volts);
+        }
+        pivotVoltage.put(volts);
     }
 
     public void setPivotDashboard() {

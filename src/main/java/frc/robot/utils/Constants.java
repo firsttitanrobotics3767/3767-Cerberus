@@ -20,24 +20,19 @@ public class Constants {
         //TODO: calculate trackwidth
         public static final double trackWidthMeters = 0.65347;
         public static final double wheelDiameter = Units.inchesToMeters(6.25);
-        public static final double countsPerRev = 42;
+        private static final double countsPerRev = 42;
         // 11:62    18:34
-        public static final double gearRatio = 10.64;   // 62(34/18)/11
+        private static final double gearRatio = 10.64;   // 62(34/18)/11
         public static final double CountsPerMeter = (gearRatio * countsPerRev) / wheelDiameter * Math.PI;
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
     }
 
     public static class Pivot {
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
-        public static final double kS = 0;
-        public static final double kG = 0;
-        public static final double kV = 0;
-        public static final double kA = 0;
-        public static final double maxVel = 3;
-        public static final double maxAcc = 10;
-        public static final double offsetRads = 0.5;
+        public static final double kG = 0.0;
+        public static final double kP = 0.0;
+        private static final double countsPerRev = 42;
+        private static final double gearRatio = (60 / 18) * 20;
+        public static final double degreesPerTick = (360 / gearRatio) / 42;
     }
 }
