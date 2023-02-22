@@ -27,4 +27,17 @@ public class Constants {
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
     }
+
+    public static class Pivot {
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kS = 0;
+        public static final double kG = 0;
+        public static final double kV = 0;
+        public static final double kA = 0;
+        public static final double maxVel = 3;
+        public static final double maxAcc = 10;
+        public static final double offsetRads = 0.5;
+    }
 }
