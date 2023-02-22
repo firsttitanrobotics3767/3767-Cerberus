@@ -17,7 +17,7 @@ public class SupplyPivotSpeed extends CommandBase{
 
     @Override
     public void execute() {
-        pivot.setPivotSpeed(speed.get());
+        pivot.setPivotSpeed(-speed.get());
     }
 
     @Override

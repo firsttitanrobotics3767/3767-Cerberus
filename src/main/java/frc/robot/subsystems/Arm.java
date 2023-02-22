@@ -6,14 +6,15 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DigitalInput;
+
 // WPILib
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Utils
 import frc.robot.utils.Dashboard;
+import frc.robot.utils.Dashboard.Entry;
 import frc.robot.utils.IDMap;
 
 /** The extension of the arm */
@@ -23,8 +24,13 @@ public class Arm extends SubsystemBase {
     private final RelativeEncoder armEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
+    public final Entry<Double> armTargetSpeed, armEncoderValue;
 
     public Arm() {
+
+        armTargetSpeed = Entry.getDoubleEntry("Arm Target Speed", 0);
+        armEncoderValue = Entry.getDoubleEntry("Arm Position", 0);
+
         // Arm motor
         armMotor = new CANSparkMax(IDMap.CAN.arm.ID, MotorType.kBrushless);
         armMotor.restoreFactoryDefaults();
@@ -41,8 +47,7 @@ public class Arm extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("port " + forwardLimitSwitch.getChannel(), forwardLimitSwitch.get());
-        SmartDashboard.putBoolean("port " + reverseLimitSwitch.getChannel(), reverseLimitSwitch.get());
+        armEncoderValue.put(armEncoder.getPosition());
     }
 
     // TODO: position control
@@ -62,7 +67,8 @@ public class Arm extends SubsystemBase {
         } else {
             armMotor.set(speed);
         }
-        SmartDashboard.putNumber("Arm Traget Speed", speed);
+
+        armTargetSpeed.put(speed);
     }
 
     public void setArmVolts(double volts) {

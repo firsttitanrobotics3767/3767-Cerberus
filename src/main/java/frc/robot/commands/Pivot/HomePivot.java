@@ -8,10 +8,12 @@ public class HomePivot extends CommandBase{
 
     public HomePivot(Pivot pivot) {
         this.pivot = pivot;
+        addRequirements(pivot);
     }
 
     @Override
     public void initialize() {
+        pivot.enableSoftLimits(false);
         pivot.setPivotSpeed(-0.1);
     }
 
@@ -19,12 +21,12 @@ public class HomePivot extends CommandBase{
     public void end(boolean isInterrupted) {
         pivot.setPivotSpeed(0);
         pivot.resetPivotEncoder();
-        pivot.setSoftLimits(10, 0);
+        pivot.setSoftLimits(55, 0.05);
         pivot.enableSoftLimits(true);
     }
 
     @Override
     public boolean isFinished() {
-        return pivot.reverseLimitSwitch.get();
+        return pivot.forwardLimitSwitch.get();
     }
 }

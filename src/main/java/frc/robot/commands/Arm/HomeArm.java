@@ -8,10 +8,12 @@ public class HomeArm extends CommandBase{
 
     public HomeArm(Arm arm) {
         this.arm = arm;
+        addRequirements(arm);
     }
 
     @Override
     public void initialize() {
+        arm.enableSoftlimits(false);
         arm.setArmSpeed(-0.1);
     }
 
@@ -19,7 +21,7 @@ public class HomeArm extends CommandBase{
     public void end(boolean isInterrupted) {
         arm.setArmSpeed(0);
         arm.resetArmEncoder();
-        arm.setSoftLimits(10, 0);
+        arm.setSoftLimits(93, 1);
         arm.enableSoftlimits(true);
     }
 

@@ -25,14 +25,18 @@ public class Pivot extends SubsystemBase{
     /** Forward and reverse limit switches for the pivot. Connected to motor controller */
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
+    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition;
 
     public Pivot() {
+
+        pivotSpeed = Dashboard.Entry.getDoubleEntry("Pivot Speed", 0);
+        pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);
 
         // Pivot motor
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
         pivotMotor.restoreFactoryDefaults();
         pivotMotor.setIdleMode(IdleMode.kBrake);
-        pivotMotor.setInverted(true);
+        pivotMotor.setInverted(false);
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
@@ -40,12 +44,13 @@ public class Pivot extends SubsystemBase{
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
         reverseLimitSwitch = new DigitalInput(IDMap.DIO.pivotReverseLimit.port);
+
+        
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("port " + forwardLimitSwitch.getChannel(), forwardLimitSwitch.get());
-        SmartDashboard.putBoolean("port " + reverseLimitSwitch.getChannel(), reverseLimitSwitch.get());
+        pivotPosition.put(pivotEncoder.getPosition());
     }
 
     // TODO: position control
@@ -54,9 +59,9 @@ public class Pivot extends SubsystemBase{
     public void setPivotSpeed(double speed) {
         if (limitSwitchesEnabled) {
             if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
-                if (forwardLimitSwitch.get() && speed < 0) {
+                if (forwardLimitSwitch.get() && speed > 0) {
                     pivotMotor.set(speed);
-                } else if (reverseLimitSwitch.get() && speed > 0) {
+                } else if (reverseLimitSwitch.get() && speed < 0) {
                     pivotMotor.set(speed);
                 } else {pivotMotor.set(0);}
             } else {
@@ -65,7 +70,7 @@ public class Pivot extends SubsystemBase{
         } else {
             pivotMotor.set(speed);
         }
-        SmartDashboard.putNumber("Pivot Traget Speed", speed);
+        pivotSpeed.put(speed);
     }
 
     public void setPivotVolts(double volts) {
