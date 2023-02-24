@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase{
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
-        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
+        // pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
