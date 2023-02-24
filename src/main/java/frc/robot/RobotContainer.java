@@ -5,11 +5,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.Arm.HomeArm;
-import frc.robot.commands.Arm.SupplyArmSpeed;
+import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
+import frc.robot.commands.Drivetrain.GyroBalance;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
 import frc.robot.subsystems.Arm;
@@ -31,16 +33,22 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
-    arm.setDefaultCommand(new SupplyArmSpeed(() -> -operator.getRawAxis(5), arm));
+    arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
     drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
   }
 
   private void configureBindings() {
-    JoystickButton togglePincher = new JoystickButton(operator, 1);
-    JoystickButton toggleWrist = new JoystickButton(operator, 3);
+    JoystickButton openPincher = new JoystickButton(operator, 5);
+    JoystickButton closePincher = new JoystickButton(operator, 7);
+    JoystickButton wristUp = new JoystickButton(operator, 6);
+    JoystickButton wristDown = new JoystickButton(operator, 8);
+    JoystickButton balance = new JoystickButton(driver, 1);
 
-    togglePincher.onTrue(new InstantCommand(() -> manipulator.togglePincher()));
-    toggleWrist.onTrue(new InstantCommand(() -> manipulator.toggleWrist()));
+    openPincher.onTrue(new InstantCommand(() -> manipulator.openPincher()));
+    closePincher.onTrue(new InstantCommand(() -> manipulator.closePincher()));
+    wristUp.onTrue(new InstantCommand(() -> manipulator.wristUp()));
+    wristDown.onTrue(new InstantCommand(() -> manipulator.wristDown()));
+    balance.whileTrue(new GyroBalance(drivetrain).andThen(new WaitCommand(0.3)).andThen(() -> drivetrain.arcadeDrive(0, 0)));
 
     Dashboard.putSendable("Home Pivot", new HomePivot(pivot));
     Dashboard.putSendable("Home Arm", new HomeArm(arm));

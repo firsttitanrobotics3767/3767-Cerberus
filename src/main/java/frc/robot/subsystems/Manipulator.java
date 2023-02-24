@@ -14,6 +14,8 @@ public class Manipulator extends SubsystemBase {
         compressor.enableAnalog(95, 115);
         conicalPincher = new DoubleSolenoid(PneumaticsModuleType.REVPH, IDMap.Pneumatics.openPincher.port, IDMap.Pneumatics.closePincher.port);
         wrist = new DoubleSolenoid(PneumaticsModuleType.REVPH, IDMap.Pneumatics.wristUp.port, IDMap.Pneumatics.wristDown.port);
+        conicalPincher.set(DoubleSolenoid.Value.kReverse);
+        wrist.set(DoubleSolenoid.Value.kForward);
     }
 
     public void openPincher() {
