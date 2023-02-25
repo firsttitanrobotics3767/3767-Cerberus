@@ -36,15 +36,19 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    JoystickButton togglePincher = new JoystickButton(operator, 1);
-    JoystickButton toggleWrist = new JoystickButton(operator, 3);
+    JoystickButton openPincher = new JoystickButton(operator, 5);
+    JoystickButton closePincher = new JoystickButton(operator, 7);
+    JoystickButton wristUp = new JoystickButton(operator, 6);
+    JoystickButton wristDown = new JoystickButton(operator, 8);
 
-    togglePincher.onTrue(new InstantCommand(() -> manipulator.togglePincher()));
-    toggleWrist.onTrue(new InstantCommand(() -> manipulator.toggleWrist()));
+    openPincher.onTrue(new InstantCommand(() -> manipulator.openPincher()));
+    closePincher.onTrue(new InstantCommand(() -> manipulator.closePincher()));
+    wristUp.onTrue(new InstantCommand(() -> manipulator.wristUp()));
+    wristDown.onTrue(new InstantCommand(() -> manipulator.wristDown()));
 
     Dashboard.putSendable("Home Pivot", new HomePivot(pivot));
     Dashboard.putSendable("Home Arm", new HomeArm(arm));
-    Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder()));
+    Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder()).withName("Reset Pivot"));
   }
 
   public Command getAutonomousCommand() {

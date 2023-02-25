@@ -9,6 +9,7 @@ public class HomePivot extends CommandBase{
     public HomePivot(Pivot pivot) {
         this.pivot = pivot;
         addRequirements(pivot);
+        setName("Home Pivot");
     }
 
     @Override

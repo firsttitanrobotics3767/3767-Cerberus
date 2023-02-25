@@ -75,7 +75,7 @@ public class Pivot extends SubsystemBase{
         pivotSpeed.put(speed);
     }
 
-    public void positionArm(double speed) {
+    public void positionPivot(double speed) {
         setpoint += speed;
         double error = setpoint - pivotEncoder.getPosition();
         double gravityCompensation = Constants.Pivot.kG * Math.cos(pivotEncoder.getPosition());
