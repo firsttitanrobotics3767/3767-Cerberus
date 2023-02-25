@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final Joystick operator = new Joystick(1);
 
   public RobotContainer() {
+    CameraServer.startAutomaticCapture();
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
     arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
