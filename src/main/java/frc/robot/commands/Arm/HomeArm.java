@@ -27,6 +27,6 @@ public class HomeArm extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return arm.reverseLimitSwitch.get();
+        return !arm.reverseLimitSwitch.get();
     }
 }
