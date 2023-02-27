@@ -9,9 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
 // Utils

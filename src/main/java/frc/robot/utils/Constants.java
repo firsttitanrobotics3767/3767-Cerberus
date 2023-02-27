@@ -31,8 +31,6 @@ public class Constants {
     public static class Pivot {
         public static final double kG = 1;
         public static final double kP = 0.0;
-        private static final double countsPerRev = 42;
-        private static final double gearRatio = (20 * 3);
         public static final double degreesPerTick = 1.8;
     }
 }
