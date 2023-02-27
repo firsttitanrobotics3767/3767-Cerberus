@@ -41,7 +41,7 @@ public class Pivot extends SubsystemBase{
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
-        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
+        // pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
@@ -52,7 +52,9 @@ public class Pivot extends SubsystemBase{
 
     @Override
     public void periodic() {
-        pivotPosition.put(pivotEncoder.getPosition());
+        // pivotPosition.put(((pivotEncoder.getPosition() / 200) * 360));
+        // System.out.println((double)(1 / 20));
+        pivotPosition.put(pivotEncoder.getPosition() * Constants.Pivot.degreesPerTick);
     }
 
     // TODO: position control
@@ -79,7 +81,9 @@ public class Pivot extends SubsystemBase{
         setpoint += speed;
         double error = setpoint - pivotEncoder.getPosition();
         double gravityCompensation = Constants.Pivot.kG * Math.cos(pivotEncoder.getPosition());
-        double volts = (Constants.Pivot.kP * error) + gravityCompensation;
+        // double volts = (Constants.Pivot.kP * error) + gravityCompensation;        
+        // double volts = speed + gravityCompensation;
+        double volts = gravityCompensation;
         if (limitSwitchesEnabled) {
             if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
                 if (forwardLimitSwitch.get() && volts < 0) {
@@ -94,6 +98,7 @@ public class Pivot extends SubsystemBase{
             pivotMotor.setVoltage(volts);
         }
         pivotVoltage.put(volts);
+        // pivotPosition.put(setpoint);
     }
 
     public void setPivotDashboard() {

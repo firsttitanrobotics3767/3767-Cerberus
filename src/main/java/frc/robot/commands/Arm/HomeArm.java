@@ -14,17 +14,18 @@ public class HomeArm extends SequentialCommandGroup{
     public HomeArm(Arm arm) {
         this.arm = arm;
         addRequirements(arm);
-        setName("Home Pivot");
+        setName("Home Arm");
         addCommands(
-            new InstantCommand(() -> arm.enableSoftlimits(false)),
-            new InstantCommand(() -> arm.setArmVolts(1)),
+            new InstantCommand(() -> {arm.enableSoftlimits(false); arm.setArmVolts(1);}),
             new WaitCommand(0.5),
             new InstantCommand(() -> arm.setArmVolts(-1)),
-            new WaitUntilCommand(() -> arm.reverseLimitSwitch.get()),
-            new InstantCommand(() -> arm.setArmVolts(0)),
-            new InstantCommand(() -> arm.resetArmEncoder()),
-            new InstantCommand(() -> arm.setSoftLimits(93, 1)),
-            new InstantCommand(() -> arm.enableSoftlimits(true))
+            new WaitUntilCommand(() -> !arm.reverseLimitSwitch.get()),
+            new InstantCommand(() -> {
+                arm.setArmVolts(0);
+                arm.resetArmEncoder();
+                arm.setSoftLimits(93, 1);
+                arm.enableSoftlimits(true);
+            })
         );
     }
 }
