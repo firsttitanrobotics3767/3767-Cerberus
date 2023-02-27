@@ -30,7 +30,7 @@ public class HomeArm extends SequentialCommandGroup{
             new InstantCommand(() -> {
                 arm.setArmVolts(0);
                 arm.resetArmEncoder();
-                arm.setSoftLimits(93, 1);
+                arm.setSoftLimits(93, 3);
                 arm.enableSoftlimits(true);
             })
         );

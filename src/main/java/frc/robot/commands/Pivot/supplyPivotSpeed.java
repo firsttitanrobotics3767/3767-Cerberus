@@ -17,12 +17,7 @@ public class supplyPivotSpeed extends CommandBase{
 
     @Override
     public void execute() {
-        // if (-speed.get() > 0.05 && -speed.get() < -0.05) {
-        //     pivot.setPivotSpeed(-speed.get());
-        // } else {
-        //     pivot.positionArm(0);
-        // }
-        pivot.setPivotVolts(-speed.get() * 10);
+        pivot.setPivotVolts(speed.get() * 10);
         pivot.setpoint = pivot.getPivotPosition();
     }
 

@@ -60,7 +60,10 @@ public class IDMap {
 
         // Arm
         armForawrdLimit(4),
-        armReverseLimit(7);
+        armReverseLimit(7),
+
+        // Manipulator
+        LEDs(2);
 
         public final int port;
         private DIO(int p) {

@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
@@ -36,7 +37,7 @@ public class Pivot extends SubsystemBase{
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
         pivotMotor.restoreFactoryDefaults();
         pivotMotor.setIdleMode(IdleMode.kBrake);
-        pivotMotor.setInverted(false);
+        pivotMotor.setInverted(true);
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
@@ -52,7 +53,7 @@ public class Pivot extends SubsystemBase{
     @Override
     public void periodic() {
         double error = setpoint - pivotEncoder.getPosition();
-        double gravityCompensation = Constants.Pivot.kG * Math.cos(pivotEncoder.getPosition());
+        double gravityCompensation = Constants.Pivot.kG * -Math.cos(Units.degreesToRadians(pivotEncoder.getPosition()));
         volts = (Constants.Pivot.kP * error);
         if (speedControl) {
             volts = targetVolts;
@@ -75,8 +76,6 @@ public class Pivot extends SubsystemBase{
         pivotPosition.put(pivotEncoder.getPosition());
         pivotError.put(error);
     }
-
-    // TODO: position control
 
     // Motor methods
     public void setPivotVolts(double volts) {
@@ -111,8 +110,8 @@ public class Pivot extends SubsystemBase{
         return pivotEncoder.getVelocity();
     }
 
-    public void resetPivotEncoder() {
-        pivotEncoder.setPosition(0);
+    public void resetPivotEncoder(double position) {
+        pivotEncoder.setPosition(position);
     }
 
     // Limits
