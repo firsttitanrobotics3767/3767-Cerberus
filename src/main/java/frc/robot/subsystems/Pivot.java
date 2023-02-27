@@ -21,15 +21,16 @@ public class Pivot extends SubsystemBase{
     private final CANSparkMax pivotMotor;
     private final RelativeEncoder pivotEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
-    public Boolean limitSwitchesEnabled = true;
-    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage;
-    public double setpoint = 0;
+    public Boolean limitSwitchesEnabled = true, isCalibrated = false, speedControl = false;
+    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError;
+    public double setpoint = 0, targetVolts = 0, volts = 0;
 
     public Pivot() {
 
         pivotSpeed = Dashboard.Entry.getDoubleEntry("Pivot Speed", 0);
         pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);
         pivotVoltage = Dashboard.Entry.getDoubleEntry("Pivot Voltage", 0);
+        pivotError = Dashboard.Entry.getDoubleEntry("Pivot Error", 0);
 
         // Pivot motor
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
@@ -39,7 +40,7 @@ public class Pivot extends SubsystemBase{
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
-        // pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
+        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
@@ -50,38 +51,13 @@ public class Pivot extends SubsystemBase{
 
     @Override
     public void periodic() {
-        // pivotPosition.put(((pivotEncoder.getPosition() / 200) * 360));
-        // System.out.println((double)(1 / 20));
-        pivotPosition.put(pivotEncoder.getPosition() * Constants.Pivot.degreesPerTick);
-    }
-
-    // TODO: position control
-
-    // Motor methods
-    public void setPivotSpeed(double speed) {
-        if (limitSwitchesEnabled) {
-            if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
-                if (forwardLimitSwitch.get() && speed > 0) {
-                    pivotMotor.set(speed);
-                } else if (reverseLimitSwitch.get() && speed < 0) {
-                    pivotMotor.set(speed);
-                } else {pivotMotor.set(0);}
-            } else {
-                pivotMotor.set(speed);
-            }
-        } else {
-            pivotMotor.set(speed);
-        }
-        pivotSpeed.put(speed);
-    }
-
-    public void positionPivot(double speed) {
-        setpoint += speed;
         double error = setpoint - pivotEncoder.getPosition();
         double gravityCompensation = Constants.Pivot.kG * Math.cos(pivotEncoder.getPosition());
-        // double volts = (Constants.Pivot.kP * error) + gravityCompensation;        
-        // double volts = speed + gravityCompensation;
-        double volts = gravityCompensation;
+        volts = (Constants.Pivot.kP * error);
+        if (speedControl) {
+            volts = targetVolts;
+        }
+        volts += gravityCompensation;
         if (limitSwitchesEnabled) {
             if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
                 if (forwardLimitSwitch.get() && volts < 0) {
@@ -96,7 +72,23 @@ public class Pivot extends SubsystemBase{
             pivotMotor.setVoltage(volts);
         }
         pivotVoltage.put(volts);
-        // pivotPosition.put(setpoint);
+        pivotPosition.put(pivotEncoder.getPosition());
+        pivotError.put(error);
+    }
+
+    // TODO: position control
+
+    // Motor methods
+    public void setPivotVolts(double volts) {
+        this.volts = volts;
+    }
+
+    public void setPivotPosition(double setpoint) {
+        this.setpoint = setpoint;
+    }
+
+    public void addPivotPosition(double speed) {
+        setpoint += speed;
     }
 
     public void setPivotDashboard() {

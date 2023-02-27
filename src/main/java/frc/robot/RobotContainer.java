@@ -16,6 +16,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Pivot;
+import frc.robot.utils.AllRobotSubsystems;
 import frc.robot.utils.Dashboard;
 
 public class RobotContainer {
@@ -24,6 +25,7 @@ public class RobotContainer {
   private final Pivot pivot = new Pivot();
   private final Arm arm = new Arm();
   private final Manipulator manipulator = new Manipulator();
+  private final AllRobotSubsystems allRobotSubsystems = new AllRobotSubsystems(drivetrain, pivot, arm, manipulator, null);
 
   private final Joystick driver = new Joystick(0);
   private final Joystick operator = new Joystick(1);
@@ -42,19 +44,15 @@ public class RobotContainer {
     JoystickButton wristUp = new JoystickButton(operator, 6);
     JoystickButton wristDown = new JoystickButton(operator, 8);
     JoystickButton balance = new JoystickButton(driver, 1);
-    JoystickButton test = new JoystickButton(driver, 4);
 
     openPincher.onTrue(new InstantCommand(() -> manipulator.openPincher()));
     closePincher.onTrue(new InstantCommand(() -> manipulator.closePincher()));
     wristUp.onTrue(new InstantCommand(() -> manipulator.wristUp()));
     wristDown.onTrue(new InstantCommand(() -> manipulator.wristDown()));
-    // balance.whileTrue(new GyroBalance(drivetrain).andThen(new WaitCommand(0.3)).andThen(() -> drivetrain.arcadeDrive(0, 0)));
     balance.whileTrue(new ForwardFacingV1(drivetrain));
-    test.onTrue(new ArcadeDrive(() -> 0.35, () -> 0.0, drivetrain));
-    test.onFalse(new ArcadeDrive(() -> 0.0, () -> 0.0, drivetrain));
 
     Dashboard.putSendable("Home Pivot", new HomePivot(pivot));
-    Dashboard.putSendable("Home Arm", new HomeArm(arm));
+    Dashboard.putSendable("Home Arm", new HomeArm(allRobotSubsystems));
     Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder()).withName("Reset Pivot"));
   }
 

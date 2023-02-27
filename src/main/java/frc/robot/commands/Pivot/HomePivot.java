@@ -15,13 +15,14 @@ public class HomePivot extends CommandBase{
     @Override
     public void initialize() {
         pivot.enableSoftLimits(false);
-        pivot.setPivotSpeed(-0.1);
+        pivot.setPivotVolts(-1);
     }
 
     @Override
     public void end(boolean isInterrupted) {
-        pivot.setPivotSpeed(0);
+        pivot.setPivotVolts(0);
         pivot.resetPivotEncoder();
+        // TODO: set limits and position to use degrees and level arm
         pivot.setSoftLimits(55, 0.05);
         pivot.enableSoftLimits(true);
     }

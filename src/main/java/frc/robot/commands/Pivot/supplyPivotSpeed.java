@@ -22,11 +22,12 @@ public class supplyPivotSpeed extends CommandBase{
         // } else {
         //     pivot.positionArm(0);
         // }
-        pivot.setPivotSpeed(-speed.get());
+        pivot.setPivotVolts(-speed.get() * 10);
+        pivot.setpoint = pivot.getPivotPosition();
     }
 
     @Override
     public void end(boolean isInterrupted) {
-        pivot.setPivotSpeed(0);
+        pivot.setPivotVolts(0);
     }
 }
