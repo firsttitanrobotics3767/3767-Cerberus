@@ -80,7 +80,14 @@ public class Pivot extends SubsystemBase{
 
     // Motor methods
     public void setPivotVolts(double volts) {
-        this.volts = volts;
+        if (volts > 0.05 || volts < -0.05) {
+            speedControl = true;
+            targetVolts = volts;
+        } else {
+            speedControl = false;
+            targetVolts = 0;
+        }
+
     }
 
     public void setPivotPosition(double setpoint) {
