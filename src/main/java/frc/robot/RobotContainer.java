@@ -23,13 +23,13 @@ import frc.robot.utils.Dashboard;
 
 public class RobotContainer {
 
-  private final Drivetrain drivetrain = new Drivetrain();
+  public final Drivetrain drivetrain = new Drivetrain();
   private final Pivot pivot = new Pivot();
   private final Arm arm = new Arm();
   private final Manipulator manipulator = new Manipulator();
   private final AllRobotSubsystems allRobotSubsystems = new AllRobotSubsystems(drivetrain, pivot, arm, manipulator, null);
 
-  private final Joystick driver = new Joystick(0);
+  public final Joystick driver = new Joystick(0);
   private final Joystick operator = new Joystick(1);
 
   public RobotContainer() {
@@ -37,7 +37,7 @@ public class RobotContainer {
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
     arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
-    drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
+    // drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
   }
 
   private void configureBindings() {
@@ -76,7 +76,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // return new ForwardFacingV1(drivetrain);
-    return new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0));
+    return new ForwardFacingV1(drivetrain);
+    // return new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0));
+    // return new InstantCommand();
   }
 }

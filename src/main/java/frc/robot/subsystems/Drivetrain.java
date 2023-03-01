@@ -42,7 +42,7 @@ public class Drivetrain extends SubsystemBase{
     private final PhotonCamera camera;
 
     // Utils
-    private final DifferentialDrive differentialDrive;
+    public final DifferentialDrive differentialDrive;
     private final SlewRateLimiter throttleLimiter;
     private final DifferentialDriveOdometry odometry;
     private final Field2d field;
