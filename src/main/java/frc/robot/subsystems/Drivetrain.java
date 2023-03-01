@@ -113,7 +113,7 @@ public class Drivetrain extends SubsystemBase{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Gyro rotation", gyro.getYaw());
+        SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
         SmartDashboard.putBoolean("on charging station", getGyroPitch() > 13);
     }
 

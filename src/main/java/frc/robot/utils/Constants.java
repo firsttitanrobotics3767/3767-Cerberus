@@ -35,6 +35,6 @@ public class Constants {
     }
 
     public static class Manipulator {
-        public static final int LEDLength = 20;
+        public static final int LEDLength = 17;
     }
 }

@@ -47,6 +47,7 @@ public class RobotContainer {
     
 
     balance.whileTrue(new ForwardFacingV1(drivetrain));
+    test.onTrue(new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0)));
 
     // Operator button bindigns
     JoystickButton openPincher = new JoystickButton(operator, 5);
@@ -75,6 +76,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    // return new ForwardFacingV1(drivetrain);
+    return new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0));
   }
 }

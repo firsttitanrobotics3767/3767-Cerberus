@@ -25,4 +25,9 @@ public class ArcadeDrive extends CommandBase {
     public void end(boolean isInterrupted) {
         drivetrain.arcadeDrive(0, 0);
     }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

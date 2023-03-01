@@ -63,7 +63,7 @@ public class IDMap {
         armReverseLimit(7),
 
         // Manipulator
-        LEDs(2);
+        LEDs(9);
 
         public final int port;
         private DIO(int p) {
