@@ -3,22 +3,17 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.supplyArmSpeed;
-import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
-import frc.robot.commands.balance.ForwardFacingV1;
-import frc.robot.subsystems.Arm;
+import frc.robot.commands.auton.balance.ForwardFacingV1;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Pivot;
-import frc.robot.utils.AllRobotSubsystems;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Manipulator;
 import frc.robot.utils.Dashboard;
 
 public class RobotContainer {
@@ -27,7 +22,6 @@ public class RobotContainer {
   private final Pivot pivot = new Pivot();
   private final Arm arm = new Arm();
   private final Manipulator manipulator = new Manipulator();
-  private final AllRobotSubsystems allRobotSubsystems = new AllRobotSubsystems(drivetrain, pivot, arm, manipulator, null);
 
   public final Joystick driver = new Joystick(0);
   private final Joystick operator = new Joystick(1);
@@ -70,8 +64,8 @@ public class RobotContainer {
     
     
     
-    Dashboard.putSendable("Home Pivot", new HomePivot(allRobotSubsystems));
-    Dashboard.putSendable("Home Arm", new HomeArm(allRobotSubsystems));
+    Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm));
+    Dashboard.putSendable("Home Arm", new HomeArm(pivot, arm));
     Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder(84)).withName("Reset Pivot"));
   }
 

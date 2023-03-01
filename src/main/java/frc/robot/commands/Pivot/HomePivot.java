@@ -1,22 +1,14 @@
 package frc.robot.commands.Pivot;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.commands.Arm.HomeArm;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Pivot;
-import frc.robot.utils.AllRobotSubsystems;
 
 public class HomePivot extends SequentialCommandGroup {
-    private final Pivot pivot;
-    private final Arm arm;
-
-    public HomePivot(AllRobotSubsystems s) {
-        this.pivot = s.pivot;
-        this.arm = s.arm;
+    public HomePivot(Pivot pivot, Arm arm) {
         addRequirements(pivot);
         setName("Home Pivot");
         addCommands(

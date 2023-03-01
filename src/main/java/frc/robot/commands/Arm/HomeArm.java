@@ -6,15 +6,9 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Pivot;
-import frc.robot.utils.AllRobotSubsystems;
 
 public class HomeArm extends SequentialCommandGroup{
-    private final Arm arm;
-    private final Pivot pivot;
-
-    public HomeArm(AllRobotSubsystems s) {
-        arm = s.arm;
-        pivot = s.pivot;
+    public HomeArm(Pivot pivot, Arm arm) {
         addRequirements(arm);
         setName("Home Arm");
         addCommands(
@@ -30,7 +24,7 @@ public class HomeArm extends SequentialCommandGroup{
             new InstantCommand(() -> {
                 arm.setArmVolts(0);
                 arm.resetArmEncoder();
-                arm.setSoftLimits(93, 3);
+                arm.setSoftLimits(93, 1);
                 arm.enableSoftlimits(true);
             })
         );
