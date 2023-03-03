@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -9,6 +10,7 @@ import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
+import frc.robot.commands.auton.balance.BackFacingV1;
 import frc.robot.commands.auton.balance.ForwardFacingV1;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
@@ -26,12 +28,19 @@ public class RobotContainer {
   public final Joystick driver = new Joystick(0);
   private final Joystick operator = new Joystick(1);
 
+  private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+
   public RobotContainer() {
     CameraServer.startAutomaticCapture();
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
     arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
     // drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
+
+    autoChooser.addOption("Forward", new ForwardFacingV1(drivetrain));
+    autoChooser.addOption("Empty", new InstantCommand());
+
+    Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 
   private void configureBindings() {
@@ -44,13 +53,14 @@ public class RobotContainer {
     test.onTrue(new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0)));
 
     // Operator button bindigns
-    JoystickButton openPincher = new JoystickButton(operator, 5);
-    JoystickButton closePincher = new JoystickButton(operator, 7);
+    JoystickButton openPincher = new JoystickButton(operator, 7);
+    JoystickButton closePincher = new JoystickButton(operator, 5);
     JoystickButton wristUp = new JoystickButton(operator, 6);
     JoystickButton wristDown = new JoystickButton(operator, 8);
     JoystickButton requestCone = new JoystickButton(operator, 3);
     JoystickButton requestCube = new JoystickButton(operator, 2);
     JoystickButton clearLEDs = new JoystickButton(operator, 4);
+    
 
 
     openPincher.onTrue(new InstantCommand(() -> manipulator.openPincher()));
@@ -70,6 +80,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    // return new BackFacingV1(drivetrain);
     return new ForwardFacingV1(drivetrain);
     // return new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0));
     // return new InstantCommand();

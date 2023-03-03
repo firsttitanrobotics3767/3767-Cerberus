@@ -29,8 +29,9 @@ public class Constants {
     }
 
     public static class Pivot {
-        public static final double kG = 0.2;
+        public static final double kG = 0.19;
         public static final double kP = 0.0;
+        // public static final double kP = 0.08;
         public static final double degreesPerTick = 1.8;
     }
 

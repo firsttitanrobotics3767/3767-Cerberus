@@ -20,7 +20,7 @@ public class HomeArm extends SequentialCommandGroup{
             }),
             new WaitCommand(0.5),
             new InstantCommand(() -> arm.setArmVolts(-1)),
-            new WaitUntilCommand(() -> !arm.reverseLimitSwitch.get()),
+            new WaitUntilCommand(() -> arm.getReverseLimitSwitchPressed()),
             new InstantCommand(() -> {
                 arm.setArmVolts(0);
                 arm.resetArmEncoder();

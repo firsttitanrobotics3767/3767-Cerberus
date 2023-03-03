@@ -23,7 +23,7 @@ public class Pivot extends SubsystemBase{
     private final RelativeEncoder pivotEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true, isCalibrated = false, speedControl = false;
-    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError;
+    public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError, setpointDashboard;
     public double setpoint = 0, targetVolts = 0, volts = 0;
 
     public Pivot() {
@@ -32,6 +32,7 @@ public class Pivot extends SubsystemBase{
         pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);
         pivotVoltage = Dashboard.Entry.getDoubleEntry("Pivot Voltage", 0);
         pivotError = Dashboard.Entry.getDoubleEntry("Pivot Error", 0);
+        setpointDashboard = Dashboard.Entry.getDoubleEntry("Setpoint", 0);
 
         // Pivot motor
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
@@ -52,9 +53,10 @@ public class Pivot extends SubsystemBase{
 
     @Override
     public void periodic() {
-        double error = setpoint - pivotEncoder.getPosition();
+        // setpoint = setpointDashboard.get();
+        double error = setpoint + pivotEncoder.getPosition();
         double gravityCompensation = Constants.Pivot.kG * -Math.cos(Units.degreesToRadians(pivotEncoder.getPosition()));
-        volts = (Constants.Pivot.kP * error);
+        volts = (Constants.Pivot.kP * -error);
         if (speedControl) {
             volts = targetVolts;
         }

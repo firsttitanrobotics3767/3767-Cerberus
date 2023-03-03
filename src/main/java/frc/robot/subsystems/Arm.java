@@ -54,10 +54,10 @@ public class Arm extends SubsystemBase {
     // Motor methods
     public void setArmSpeed(double speed) {
         if (limitSwitchesEnabled) {
-            if (forwardLimitSwitch.get() || !reverseLimitSwitch.get()) {
+            if (forwardLimitSwitch.get() || getReverseLimitSwitchPressed()) {
                 if (forwardLimitSwitch.get() && speed < 0) {
                     armMotor.set(speed);
-                } else if (!reverseLimitSwitch.get() && speed > 0) {
+                } else if (getReverseLimitSwitchPressed() && speed > 0) {
                     armMotor.set(speed);
                 } else {armMotor.set(0);}
             } else {
@@ -117,6 +117,10 @@ public class Arm extends SubsystemBase {
      */
     public void enableLimitSwitches(boolean enabled) {
         limitSwitchesEnabled = enabled;
+    }
+
+    public boolean getReverseLimitSwitchPressed() {
+        return !reverseLimitSwitch.get();
     }
 
 }
