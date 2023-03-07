@@ -28,7 +28,7 @@ public class Manipulator extends SubsystemBase {
         led = new AddressableLED(IDMap.DIO.LEDs.port);
         buffer = new AddressableLEDBuffer(Constants.Manipulator.LEDLength);
         led.setLength(buffer.getLength());
-        led.setData(buffer);
+        requestCone();
         led.start();
     }
 
@@ -59,14 +59,14 @@ public class Manipulator extends SubsystemBase {
     // LED Methods
     public void requestCone() {
         for (int i = 0; i < buffer.getLength(); i++) {
-            buffer.setRGB(i, 255, 150, 0);
+            buffer.setRGB(i, 255, 128, 0);
         }
         led.setData(buffer);
     }
 
     public void requestCube() {
         for (int i = 0; i < buffer.getLength(); i++) {
-            buffer.setRGB(i, 200, 10, 230);
+            buffer.setRGB(i, 255, 0, 255);
         }
         led.setData(buffer);
     }
