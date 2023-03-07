@@ -5,16 +5,18 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Pivot;
 
 public class HomePivot extends SequentialCommandGroup {
-    public HomePivot(Pivot pivot, Arm arm) {
+    public HomePivot(Pivot pivot, Arm arm, Manipulator manipulator) {
         addRequirements(pivot);
         setName("Home Pivot");
         addCommands(
             new InstantCommand(() -> {
                 pivot.enableSoftLimits(false);
                 // TODO: find acceptable limit for arm extension
+                manipulator.wristUp();
                 pivot.setPivotVolts(-1);
                 arm.setArmVolts(-1);
             }),

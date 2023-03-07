@@ -5,7 +5,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
@@ -35,22 +39,18 @@ public class RobotContainer {
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
     arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
-    // drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
 
-    autoChooser.addOption("Forward", new ForwardFacingV1(drivetrain));
+    autoChooser.setDefaultOption("Forward", new ForwardFacingV1(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
-
+    autoChooser.addOption("Low cube and mobility", new SequentialCommandGroup(
+      new InstantCommand(() -> {manipulator.closePincher(); drivetrain.arcadeDrive(-0.5, 0);}),
+      new WaitCommand(5),
+      new InstantCommand(() -> drivetrain.arcadeDrive(0, 0))));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 
   private void configureBindings() {
     // Driver button bindings
-    JoystickButton balance = new JoystickButton(driver, 1);
-    JoystickButton test = new JoystickButton(driver, 4);
-    
-
-    balance.whileTrue(new ForwardFacingV1(drivetrain));
-    test.onTrue(new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0)));
 
     // Operator button bindigns
     JoystickButton openPincher = new JoystickButton(operator, 7);
@@ -59,7 +59,9 @@ public class RobotContainer {
     JoystickButton wristDown = new JoystickButton(operator, 8);
     JoystickButton requestCone = new JoystickButton(operator, 3);
     JoystickButton requestCube = new JoystickButton(operator, 2);
-    JoystickButton clearLEDs = new JoystickButton(operator, 4);
+    JoystickButton retractArm = new JoystickButton(operator, 15);
+    JoystickButton homePivot = new JoystickButton(operator, 9);
+    JoystickButton homeArm = new JoystickButton(operator, 10);
     
 
 
@@ -69,20 +71,20 @@ public class RobotContainer {
     wristDown.onTrue(new InstantCommand(() -> manipulator.wristDown()));
     requestCone.onTrue(new InstantCommand(() -> manipulator.requestCone()));
     requestCube.onTrue(new InstantCommand(() -> manipulator.requestCube()));
-    clearLEDs.onTrue(new InstantCommand(() -> manipulator.clearLEDs()));
+    retractArm.onTrue(new AlternateHomeArm(pivot, arm));
+    homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
+    homeArm.onTrue(new HomeArm(pivot, arm));
 
     
     
     
-    Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm));
+    Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));
     Dashboard.putSendable("Home Arm", new HomeArm(pivot, arm));
     Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder(84)).withName("Reset Pivot"));
+    Dashboard.putSendable("ALTERNATE ARM", new AlternateHomeArm(pivot, arm));
   }
 
   public Command getAutonomousCommand() {
-    // return new BackFacingV1(drivetrain);
-    return new ForwardFacingV1(drivetrain);
-    // return new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0));
-    // return new InstantCommand();
+    return autoChooser.getSelected();
   }
 }
