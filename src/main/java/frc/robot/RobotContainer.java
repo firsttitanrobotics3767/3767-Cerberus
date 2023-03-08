@@ -8,14 +8,12 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
-import frc.robot.commands.auton.balance.BackFacingV1;
-import frc.robot.commands.auton.balance.ForwardFacingV1;
+import frc.robot.commands.auton.balance.ForwardBalance;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Arm;
@@ -40,7 +38,7 @@ public class RobotContainer {
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> operator.getRawAxis(1), pivot));
     arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
 
-    autoChooser.setDefaultOption("Forward", new ForwardFacingV1(drivetrain));
+    autoChooser.setDefaultOption("Forward", new ForwardBalance(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
     autoChooser.addOption("Low cube and mobility", new SequentialCommandGroup(
       new InstantCommand(() -> {manipulator.closePincher(); drivetrain.arcadeDrive(-0.5, 0);}),
