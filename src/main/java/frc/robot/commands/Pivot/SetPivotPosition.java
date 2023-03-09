@@ -9,13 +9,15 @@ import frc.robot.utils.Constants;
 
 public class SetPivotPosition extends CommandBase{
     private final Pivot pivot;
-    private double position;
+    private double targetPosition;
+    private double initialDistanceToGoal;
+    private boolean hasAccelerationBeenChanged = false;
     private final ProfiledPIDController controller;
     private final TrapezoidProfile.Constraints constraints;
 
-    public SetPivotPosition(double position, Pivot pivot) {
+    public SetPivotPosition(double targetPosition, Pivot pivot) {
         this.pivot = pivot;
-        this.position = position;
+        this.targetPosition = targetPosition;
         addRequirements(pivot);
         constraints = new TrapezoidProfile.Constraints(Constants.Pivot.kMaxVel, Constants.Pivot.kMaxAccel);
         controller = new ProfiledPIDController(
@@ -28,17 +30,43 @@ public class SetPivotPosition extends CommandBase{
     @Override
     public void initialize() {
         controller.reset(pivot.getPivotPosition());
-        controller.setGoal(position);
+        initialDistanceToGoal = targetPosition - pivot.getPivotPosition();
+        controller.setGoal(targetPosition);
     }
 
     @Override
     public void execute() {
-        pivot.setPivotVolts(controller.calculate(pivot.getPivotPosition()));
-        SmartDashboard.putNumber("controller output", controller.calculate(pivot.getPivotPosition()));
+        updateControllerConstraints();
+        double targetVolts = controller.calculate(pivot.getPivotPosition());
+        pivot.setPivotVolts(targetVolts);
+        SmartDashboard.putNumber("controller output", targetVolts);
     }
 
     @Override
     public boolean isFinished() {
         return false;
+    }
+
+    /**
+     * Check to see if the pivot has passed the halfway point, according to our
+     * controller. If we have, update the controller constraints and reduce the
+     * maximum acceleration. This is to avoid abrupt stops (which are more
+     * taxing on the robot compared to abrupt starts).
+     */
+    private void updateControllerConstraints() {
+        if (!hasAccelerationBeenChanged && isControllerPastHalfwayPoint()) {
+            controller.setConstraints(new TrapezoidProfile.Constraints(Constants.Pivot.kMaxVel, Constants.Pivot.kMaxAccel / 2));
+            hasAccelerationBeenChanged = true;
+        }
+    }
+
+    /**
+     * Check to see if the pivot is past the halfway point, according to our
+     * controller.
+     * 
+     * @return True if the pivot is past the halfway point, false otherwise.
+     */
+    private boolean isControllerPastHalfwayPoint() {
+        return controller.getGoal().position - controller.getSetpoint().position < (1/2) * initialDistanceToGoal;
     }
 }
