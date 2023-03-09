@@ -31,11 +31,11 @@ public class Constants {
     public static class Pivot {
         public static final double kG = 0.19;
         // public static final double kP = 0.0;
-        public static final double kP = 0.04;
+        public static final double kP = 0.4;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kMaxAccel = 0.0;
-        public static final double kMaxVel = 100;
+        public static final double kMaxAccel = 500;
+        public static final double kMaxVel = 90;
         public static final double degreesPerTick = 1.8;
         public static final double dampenerLimit = 10;
         public static final double dampeningFactor = -0.1;

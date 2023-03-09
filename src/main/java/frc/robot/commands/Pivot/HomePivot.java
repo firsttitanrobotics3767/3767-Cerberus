@@ -26,7 +26,7 @@ public class HomePivot extends SequentialCommandGroup {
             new InstantCommand(() -> {
                 pivot.setPivotVolts(0);
                 pivot.resetPivotEncoder(-84);
-                pivot.setSoftLimits(-84, 20);
+                pivot.setSoftLimits(20, -84);
                 pivot.enableSoftLimits(true);
             })
         );

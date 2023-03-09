@@ -73,6 +73,7 @@ public class RobotContainer {
     homeArm.onTrue(new HomeArm(pivot, arm));
 
     new JoystickButton(operator, 1).whileTrue(new SetPivotPosition(0, pivot));
+    new JoystickButton(operator, 4).whileTrue(new SetPivotPosition(-50, pivot));
 
     
     
