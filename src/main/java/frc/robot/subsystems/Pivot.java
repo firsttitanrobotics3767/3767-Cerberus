@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
 // Utils
@@ -38,7 +39,7 @@ public class Pivot extends SubsystemBase{
         pivotMotor = new CANSparkMax(IDMap.CAN.pivot.ID, MotorType.kBrushless);
         pivotMotor.restoreFactoryDefaults();
         pivotMotor.setIdleMode(IdleMode.kBrake);
-        pivotMotor.setInverted(true);
+        pivotMotor.setInverted(false);
 
         // Pivot Encoder
         pivotEncoder = pivotMotor.getEncoder();
@@ -48,24 +49,32 @@ public class Pivot extends SubsystemBase{
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
         reverseLimitSwitch = new DigitalInput(IDMap.DIO.pivotReverseLimit.port);
 
+        
+
 
     }
 
     @Override
     public void periodic() {
-        // setpoint = setpointDashboard.get();
+        setpoint = setpointDashboard.get();
         double error = setpoint + pivotEncoder.getPosition();
-        double gravityCompensation = Constants.Pivot.kG * -Math.cos(Units.degreesToRadians(pivotEncoder.getPosition()));
-        volts = (Constants.Pivot.kP * -error);
-        if (speedControl) {
-            volts = targetVolts;
-        }
+        double gravityCompensation = Constants.Pivot.kG * Math.cos(Units.degreesToRadians(pivotEncoder.getPosition()));
+        // volts = (Constants.Pivot.kP * -error);
+        // if (error < Constants.Pivot.dampenerLimit) {
+        //     volts = (error * Constants.Pivot.dampeningFactor) + Constants.Pivot.travelVolts;
+        // } else {
+        //     volts = Constants.Pivot.travelVolts;
+        // }
+        // if (speedControl) {
+        //     volts = targetVolts;
+        // }
+        volts = targetVolts;
         volts += gravityCompensation;
         if (limitSwitchesEnabled) {
             if (forwardLimitSwitch.get() || reverseLimitSwitch.get()) {
-                if (forwardLimitSwitch.get() && volts < 0) {
+                if (forwardLimitSwitch.get() && volts > 0) {
                     pivotMotor.setVoltage(volts);
-                } else if (reverseLimitSwitch.get() && volts > 0) {
+                } else if (reverseLimitSwitch.get() && volts < 0) {
                     pivotMotor.setVoltage(volts);
                 } else {pivotMotor.setVoltage(0);}
             } else {
@@ -77,6 +86,7 @@ public class Pivot extends SubsystemBase{
         pivotVoltage.put(volts);
         pivotPosition.put(pivotEncoder.getPosition());
         pivotError.put(error);
+        SmartDashboard.putNumber("Pivot current", pivotMotor.getOutputCurrent());
     }
 
     // Motor methods

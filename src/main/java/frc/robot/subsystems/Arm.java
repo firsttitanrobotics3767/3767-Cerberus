@@ -47,6 +47,9 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         armEncoderValue.put(armEncoder.getPosition());
+        if (getReverseLimitSwitchPressed()) {
+            resetArmEncoder();
+        }
     }
 
     // TODO: position control

@@ -59,7 +59,7 @@ public class Manipulator extends SubsystemBase {
     // LED Methods
     public void requestCone() {
         for (int i = 0; i < buffer.getLength(); i++) {
-            buffer.setRGB(i, 255, 128, 0);
+            buffer.setRGB(i, 255, 64, 0);
         }
         led.setData(buffer);
     }
