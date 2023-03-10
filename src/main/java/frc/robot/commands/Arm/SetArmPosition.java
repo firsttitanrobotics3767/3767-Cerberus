@@ -1,36 +1,36 @@
-package frc.robot.commands.Pivot;
+package frc.robot.commands.Arm;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Pivot;
+import frc.robot.subsystems.Arm;
 import frc.robot.utils.Constants;
 
-public class SetPivotPosition extends CommandBase{
-    private final Pivot pivot;
+public class SetArmPosition extends CommandBase{
+    private final Arm arm;
     private final double targetPosition;
     private final ProfiledPIDController controller;
     private TrapezoidProfile.Constraints constraints;
     private double initialDistanceToGoal;
     private boolean hasAccelerationBeenChanged = false;
 
-    public SetPivotPosition(double targetPosition, Pivot pivot) {
-        this.pivot = pivot;
+    public SetArmPosition(double targetPosition, Arm arm) {
+        this.arm = arm;
         this.targetPosition = targetPosition;
-        addRequirements(pivot);
-        constraints = new TrapezoidProfile.Constraints(Constants.Pivot.kMaxVel, Constants.Pivot.kMaxAccel);
+        addRequirements(arm);
+        constraints = new TrapezoidProfile.Constraints(Constants.Arm.kMaxVel, Constants.Arm.kMaxAccel);
         controller = new ProfiledPIDController(
-            Constants.Pivot.kP,
-            Constants.Pivot.kI,
-            Constants.Pivot.kD,
+            Constants.Arm.kP,
+            Constants.Arm.kI,
+            Constants.Arm.kD,
             constraints);
     }
 
     @Override
     public void initialize() {
-        controller.reset(pivot.getPivotPosition());
-        initialDistanceToGoal = targetPosition - pivot.getPivotPosition();
+        controller.reset(arm.getArmPosition());
+        initialDistanceToGoal = targetPosition - arm.getArmPosition();
         controller.setGoal(targetPosition);
     }
 
@@ -42,8 +42,8 @@ public class SetPivotPosition extends CommandBase{
         //     reduceControllerAccelerationByFactorOf(2);
         //     hasAccelerationBeenChanged = true;
         // }
-        double targetVolts = controller.calculate(pivot.getPivotPosition());
-        pivot.setPivotVolts(targetVolts);
+        double targetVolts = controller.calculate(arm.getArmPosition());
+        arm.setArmVolts(targetVolts);
         SmartDashboard.putNumber("controller output", targetVolts);
     }
 
