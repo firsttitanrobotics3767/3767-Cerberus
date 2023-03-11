@@ -48,6 +48,11 @@ public class SetPivotPosition extends CommandBase{
     }
 
     @Override
+    public void end(boolean isInterrupted) {
+        pivot.setPivotVolts(0);
+    }
+
+    @Override
     public boolean isFinished() {
         return false;
     }

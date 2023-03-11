@@ -17,6 +17,7 @@ import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
+import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
 import frc.robot.commands.auton.balance.ReverseBalance;
 import frc.robot.subsystems.Drivetrain;
@@ -28,7 +29,7 @@ import frc.robot.utils.Dashboard;
 public class RobotContainer {
 
   public final Drivetrain drivetrain = new Drivetrain();
-  private final Pivot pivot = new Pivot();
+  private final Pivot pivot = new Pivot(this);
   private final Arm arm = new Arm();
   private final Manipulator manipulator = new Manipulator();
 
@@ -46,6 +47,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Forward balance", new ForwardBalance(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
+    autoChooser.addOption("High Cube", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 

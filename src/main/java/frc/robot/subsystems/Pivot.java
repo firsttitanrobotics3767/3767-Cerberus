@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.RobotContainer;
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
 // Utils
@@ -19,6 +20,7 @@ import frc.robot.utils.IDMap;
 
 /** The rotation of the arm */
 public class Pivot extends SubsystemBase{
+    private final RobotContainer robotContainer;
     // Devices
     private final CANSparkMax pivotMotor;
     private final RelativeEncoder pivotEncoder;
@@ -27,7 +29,9 @@ public class Pivot extends SubsystemBase{
     public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError, setpointDashboard;
     public double setpoint = 0, targetVolts = 0, volts = 0;
 
-    public Pivot() {
+    public Pivot(RobotContainer robotContainer) {
+
+        this.robotContainer = robotContainer;
 
         pivotSpeed = Dashboard.Entry.getDoubleEntry("Pivot Speed", 0);
         pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.Arm.SetArmPosition;
 // import frc.robot.commands.Arm.SetArmPosition;
 import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.auton.balance.ReverseBalance;
@@ -30,15 +31,18 @@ public class HighCubeBalance extends SequentialCommandGroup{
         this.manipulator = manipulator;
         addRequirements(drivetrain, pivot, arm, manipulator);
         addCommands(
-            new SetPivotPosition(0, pivot).withTimeout(3),
-            // new SetArmPosition(85, arm).withTimeout(3),
-            new InstantCommand(() -> {manipulator.wristDown(); manipulator.openPincher();}),
-            new WaitCommand(2),
-            new InstantCommand(() -> manipulator.wristUp()),
-            // new SetArmPosition(0, arm).withTimeout(3),
-            new InstantCommand(() -> pivot.setPivotVolts(-2)).withTimeout(3),
-            
             new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)),
+            new WaitCommand(0.2),
+            new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)),
+            (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15),
+            (new SetArmPosition(85, arm).withTimeout(1)).alongWith(new InstantCommand(() -> manipulator.wristDown())),
+            new InstantCommand(() -> manipulator.openPincher()),
+            new WaitCommand(0.2),
+            new InstantCommand(() -> manipulator.wristUp()),
+            new SetArmPosition(0, arm).withTimeout(1.1),
+            new SetPivotPosition(-80, pivot).withTimeout(3).alongWith(
+            
+            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0))),
             new WaitUntilCommand(() -> (drivetrain.getGyroPitch() < -13)),
             new InstantCommand(() -> onChargingStation = true),
             new WaitCommand(4),

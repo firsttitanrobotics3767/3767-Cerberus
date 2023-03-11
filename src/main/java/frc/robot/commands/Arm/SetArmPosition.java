@@ -48,6 +48,11 @@ public class SetArmPosition extends CommandBase{
     }
 
     @Override
+    public void end(boolean isFinished) {
+        arm.setArmVolts(0);
+    }
+
+    @Override
     public boolean isFinished() {
         return false;
     }
