@@ -3,11 +3,15 @@ package frc.robot.subsystems;
 // Vendor libraries
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,6 +24,8 @@ import frc.robot.utils.IDMap;
 public class Arm extends SubsystemBase {
     /** Extension motor. Positive values will extend. */
     private final CANSparkMax armMotor;
+    private final RelativeEncoder armEncoderAlternate;
+    // private final SparkMaxAbsoluteEncoder armEncoder;
     private final RelativeEncoder armEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true;
@@ -37,7 +43,12 @@ public class Arm extends SubsystemBase {
         armMotor.setInverted(true);
 
         // Arm encoder
-        armEncoder = armMotor.getEncoder();
+        // armEncoder = armMotor.getEncoder();
+        // armEncoder = armMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+        armEncoder = armMotor.getAlternateEncoder(8192);
+        armEncoder.setPositionConversionFactor(20);
+
+        armEncoderAlternate = armMotor.getEncoder();
 
         // Arm limit switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.armForawrdLimit.port);
@@ -47,12 +58,11 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
         armEncoderValue.put(armEncoder.getPosition());
-        if (getReverseLimitSwitchPressed()) {
-            resetArmEncoder();
-        }
+        // if (getReverseLimitSwitchPressed()) {
+        //     resetArmEncoder();
+        // }
+        SmartDashboard.putNumber("Arm alternate", armEncoderAlternate.getPosition());
     }
-
-    // TODO: position control
 
     // Motor methods
     public void setArmSpeed(double speed) {
@@ -92,6 +102,7 @@ public class Arm extends SubsystemBase {
 
     public void resetArmEncoder() {
         armEncoder.setPosition(0);
+        armEncoderAlternate.setPosition(0);
     }
 
     // Limtis

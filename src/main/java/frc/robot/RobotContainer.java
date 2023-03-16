@@ -77,8 +77,11 @@ public class RobotContainer {
     homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
     homeArm.onTrue(new HomeArm(pivot, arm));
 
-    new JoystickButton(operator, 1).whileTrue(new SetPivotPosition(15, pivot));
-    new JoystickButton(operator, 4).whileTrue(new ParallelCommandGroup(new SetArmPosition(0.2, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
+    // new JoystickButton(operator, 1).whileTrue(new SetPivotPosition(0, pivot));
+    // new JoystickButton(operator, 4).whileTrue(new ParallelCommandGroup(new SetPivotPosition(0, pivot), new WaitUntilCommand(() -> pivot.getPivotPosition() > -20).andThen(new SetArmPosition(85, arm))));
+    // new JoystickButton(operator, 1).whileTrue(new ParallelCommandGroup(new SetArmPosition(0.2, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
+    new JoystickButton(operator, 1).whileTrue(new SetArmPosition(20, arm));
+    new JoystickButton(operator, 4).whileTrue(new SetArmPosition(80, arm));
     
     
     

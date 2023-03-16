@@ -31,22 +31,22 @@ public class HighCubeBalance extends SequentialCommandGroup{
         this.manipulator = manipulator;
         addRequirements(drivetrain, pivot, arm, manipulator);
         addCommands(
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)),
-            new WaitCommand(0.2),
-            new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)),
-            (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15),
+            new SequentialCommandGroup(
+                new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)),
+                new WaitCommand(0.2),
+                new InstantCommand(() -> drivetrain.arcadeDrive(0, 0))).alongWith(
+            (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15)),
             (new SetArmPosition(85, arm).withTimeout(1)).alongWith(new InstantCommand(() -> manipulator.wristDown())),
             new InstantCommand(() -> manipulator.openPincher()),
             new WaitCommand(0.2),
             new InstantCommand(() -> manipulator.wristUp()),
-            new SetArmPosition(0, arm).withTimeout(1.1),
-            new SetPivotPosition(-80, pivot).withTimeout(3).alongWith(
-            
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0))),
+            (new SetArmPosition(0, arm).withTimeout(1.1)).alongWith(
+            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0))).andThen(
+            new SetPivotPosition(-80, pivot).withTimeout(3)),
             new WaitUntilCommand(() -> (drivetrain.getGyroPitch() < -13)),
             new InstantCommand(() -> onChargingStation = true),
-            new WaitCommand(4),
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.26, 0)),
+            new WaitCommand(3.8),
+            new InstantCommand(() -> drivetrain.arcadeDrive(-0.28, 0)),
             new WaitUntilCommand(() -> onChargingStation && (drivetrain.getGyroPitch() < 10 && drivetrain.getGyroPitch() > -10)),
             new InstantCommand(() -> drivetrain.arcadeDrive(0.3, 0)),
             new WaitCommand(0.1),

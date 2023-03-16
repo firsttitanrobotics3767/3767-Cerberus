@@ -34,12 +34,12 @@ public class Constants {
         public static final double kP = 0.5;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+        /** degrees per second squared */
         public static final double kMaxAccel = 500;
+        /** degrees per second */
         public static final double kMaxVel = 100;
-        public static final double degreesPerTick = 1.8;
-        public static final double dampenerLimit = 10;
-        public static final double dampeningFactor = -0.1;
-        public static final double travelVolts = 2;
+        // public static final double degreesPerRevolution = 1.8;     // Built in encoder
+        public static final double degreesPerRevolution = 360;
     }
 
     public static class Manipulator {

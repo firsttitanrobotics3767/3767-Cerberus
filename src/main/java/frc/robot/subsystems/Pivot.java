@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 // Vendor Libraries
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 // WPILib
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,7 +26,8 @@ public class Pivot extends SubsystemBase{
     private final RobotContainer robotContainer;
     // Devices
     private final CANSparkMax pivotMotor;
-    private final RelativeEncoder pivotEncoder;
+    // private final RelativeEncoder pivotEncoder;
+    private final AbsoluteEncoder pivotEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true, isCalibrated = false, speedControl = false;
     public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError, setpointDashboard;
@@ -44,10 +48,13 @@ public class Pivot extends SubsystemBase{
         pivotMotor.restoreFactoryDefaults();
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotor.setInverted(false);
+        pivotMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
 
         // Pivot Encoder
-        pivotEncoder = pivotMotor.getEncoder();
-        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerTick);
+        // pivotEncoder = pivotMotor.getEncoder();
+        pivotEncoder = pivotMotor.getAbsoluteEncoder(SparkMaxAbsoluteEncoder.Type.kDutyCycle);
+        pivotEncoder.setPositionConversionFactor(Constants.Pivot.degreesPerRevolution);
+        pivotEncoder.setInverted(true);
 
         // Pivot Limit Switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.pivotForwardLimit.port);
@@ -88,7 +95,7 @@ public class Pivot extends SubsystemBase{
             pivotMotor.setVoltage(volts);
         }
         pivotVoltage.put(volts);
-        pivotPosition.put(pivotEncoder.getPosition());
+        pivotPosition.put(getPivotPosition());
         pivotError.put(error);
         SmartDashboard.putNumber("Pivot current", pivotMotor.getOutputCurrent());
     }
@@ -119,7 +126,8 @@ public class Pivot extends SubsystemBase{
 
     // Encoder methods
     public double getPivotPosition() {
-        return pivotEncoder.getPosition();
+        // return pivotEncoder.getPosition();
+        return pivotEncoder.getPosition() > 180 ? pivotEncoder.getPosition() - 360 : pivotEncoder.getPosition();
     }
 
     public double getPivotRate() {
@@ -127,7 +135,7 @@ public class Pivot extends SubsystemBase{
     }
 
     public void resetPivotEncoder(double position) {
-        pivotEncoder.setPosition(position);
+        // pivotEncoder.setZeroOffset(position);
     }
 
     // Limits
