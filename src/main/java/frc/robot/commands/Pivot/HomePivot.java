@@ -17,16 +17,16 @@ public class HomePivot extends SequentialCommandGroup {
                 pivot.enableSoftLimits(false);
                 // TODO: find acceptable limit for arm extension
                 manipulator.wristUp();
-                pivot.setPivotVolts(-1);
+                pivot.setPivotVolts(1);
                 arm.setArmVolts(-1);
             }),
             new WaitCommand(0.5),
-            new InstantCommand(() -> pivot.setPivotVolts(1)),
+            new InstantCommand(() -> pivot.setPivotVolts(-1)),
             new WaitUntilCommand(() -> pivot.forwardLimitSwitch.get()),
             new InstantCommand(() -> {
                 pivot.setPivotVolts(0);
-                pivot.resetPivotEncoder(84);
-                pivot.setSoftLimits(84, -20);
+                pivot.resetPivotEncoder(-84);
+                pivot.setSoftLimits(20, -84);
                 pivot.enableSoftLimits(true);
             })
         );

@@ -30,12 +30,27 @@ public class Constants {
 
     public static class Pivot {
         public static final double kG = 0.19;
-        public static final double kP = 0.0;
-        // public static final double kP = 0.08;
-        public static final double degreesPerTick = 1.8;
+        // public static final double kP = 0.0;
+        public static final double kP = 0.5;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        /** degrees per second squared */
+        public static final double kMaxAccel = 500;
+        /** degrees per second */
+        public static final double kMaxVel = 100;
+        // public static final double degreesPerRevolution = 1.8;     // Built in encoder
+        public static final double degreesPerRevolution = 360;
     }
 
     public static class Manipulator {
         public static final int LEDLength = 17;
+    }
+
+    public static class Arm {
+        public static final double kP = 1;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kMaxAccel = 500;
+        public static final double kMaxVel = 100;
     }
 }

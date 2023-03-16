@@ -6,9 +6,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Drivetrain;
 
-public class ForwardFacingV1 extends SequentialCommandGroup {
+public class ForwardBalance extends SequentialCommandGroup {
     private boolean onChargingStation = false;
-    public ForwardFacingV1(Drivetrain drivetrain) {
+    /**
+     * <p><b>Start:</b> Facing charge station
+     * 
+     * <p><b>Score:</b> Engage
+     */
+    public ForwardBalance(Drivetrain drivetrain) {
         addRequirements(drivetrain);
         addCommands(
             new InstantCommand(() -> drivetrain.arcadeDrive(0.35, 0)),
@@ -26,24 +31,3 @@ public class ForwardFacingV1 extends SequentialCommandGroup {
 
     
 }
-/*
-public class ForwardFacingV1 extends CommandBase {
-    private final Drivetrain drivetrain;
-    private boolean onChargingStation = false;
-
-    public ForwardFacingV1(Drivetrain drivetrain) {
-        this.drivetrain = drivetrain;
-        addRequirements(drivetrain);
-    }
-
-    @Override
-    public void initialize() {
-
-    }
-
-    @Override
-    public void execute() {
-
-    }
-}
-*/
