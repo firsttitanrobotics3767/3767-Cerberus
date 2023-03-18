@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.SetArmPosition;
@@ -17,6 +18,7 @@ import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
+import frc.robot.commands.auton.HighCube;
 import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
 import frc.robot.commands.auton.balance.ReverseBalance;
@@ -47,7 +49,8 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Forward balance", new ForwardBalance(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
-    autoChooser.addOption("High Cube", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("High Cube Balance", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("High Cube", new HighCube(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 
@@ -78,7 +81,7 @@ public class RobotContainer {
     homeArm.onTrue(new HomeArm(pivot, arm));
 
     new JoystickButton(operator, 1).whileTrue(new SetPivotPosition(15, pivot));
-    new JoystickButton(operator, 4).whileTrue(new ParallelCommandGroup(new SetArmPosition(0.2, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
+    new POVButton(operator, 180).whileTrue(new SetArmPosition(0.2, arm));
     
     
     

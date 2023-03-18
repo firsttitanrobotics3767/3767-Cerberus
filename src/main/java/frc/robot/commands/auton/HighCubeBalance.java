@@ -40,12 +40,12 @@ public class HighCubeBalance extends SequentialCommandGroup{
             new WaitCommand(0.2),
             new InstantCommand(() -> manipulator.wristUp()),
             new SetArmPosition(0, arm).withTimeout(1.1),
-            new SetPivotPosition(-80, pivot).withTimeout(3).alongWith(
+            new SetPivotPosition(-80, pivot).withTimeout(2).alongWith(
             
             new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0))),
             new WaitUntilCommand(() -> (drivetrain.getGyroPitch() < -13)),
             new InstantCommand(() -> onChargingStation = true),
-            new WaitCommand(4),
+            new WaitCommand(3.6),
             new InstantCommand(() -> drivetrain.arcadeDrive(-0.26, 0)),
             new WaitUntilCommand(() -> onChargingStation && (drivetrain.getGyroPitch() < 10 && drivetrain.getGyroPitch() > -10)),
             new InstantCommand(() -> drivetrain.arcadeDrive(0.3, 0)),
