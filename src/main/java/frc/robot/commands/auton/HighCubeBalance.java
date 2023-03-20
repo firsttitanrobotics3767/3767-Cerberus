@@ -31,10 +31,11 @@ public class HighCubeBalance extends SequentialCommandGroup{
         this.manipulator = manipulator;
         addRequirements(drivetrain, pivot, arm, manipulator);
         addCommands(
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)),
-            new WaitCommand(0.2),
-            new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)),
-            (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15),
+            new SequentialCommandGroup(
+                new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)),
+                new WaitCommand(0.2),
+                new InstantCommand(() -> drivetrain.arcadeDrive(0, 0))).alongWith(
+            (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15)),
             (new SetArmPosition(85, arm).withTimeout(1)).alongWith(new InstantCommand(() -> manipulator.wristDown())),
             new InstantCommand(() -> manipulator.openPincher()),
             new WaitCommand(0.2),
