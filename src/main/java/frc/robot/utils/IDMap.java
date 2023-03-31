@@ -61,6 +61,9 @@ public class IDMap {
         // Arm
         armForawrdLimit(4),
         armReverseLimit(7),
+        armEncoderA(8),
+        armEncoderB(9),
+        armEncoderI(3),
 
         // Manipulator
         LEDs(9);

@@ -17,11 +17,11 @@ public class supplyArmSpeed extends CommandBase{
 
     @Override
     public void execute() {
-        arm.setArmSpeed(speed.get());
+        arm.setArmVolts(speed.get() * 10);
     }
 
     @Override
     public void end(boolean isInterrupted) {
-        arm.setArmSpeed(0);
+        arm.setArmVolts(0);
     }
 }

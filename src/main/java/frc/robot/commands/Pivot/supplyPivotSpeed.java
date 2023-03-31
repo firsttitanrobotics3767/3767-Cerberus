@@ -18,7 +18,6 @@ public class supplyPivotSpeed extends CommandBase{
     @Override
     public void execute() {
         pivot.setPivotVolts(speed.get() * 10);
-        pivot.setpoint = pivot.getPivotPosition();
     }
 
     @Override

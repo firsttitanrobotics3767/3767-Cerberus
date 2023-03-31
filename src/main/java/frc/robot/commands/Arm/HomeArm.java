@@ -15,7 +15,6 @@ public class HomeArm extends SequentialCommandGroup{
             new InstantCommand(() -> {
                 arm.enableSoftlimits(false);
                 //TODO: get accurate acceptable angle
-                if (pivot.getPivotPosition() < -75) {pivot.setPivotPosition(-75);}
                 arm.setArmVolts(1);
             }),
             new WaitCommand(0.5),

@@ -13,7 +13,7 @@ public class SetPivotPosition extends CommandBase{
     private final ProfiledPIDController controller;
     private TrapezoidProfile.Constraints constraints;
     private double initialDistanceToGoal;
-    private boolean hasAccelerationBeenChanged = false;
+    // private boolean hasAccelerationBeenChanged = false;
 
     public SetPivotPosition(double targetPosition, Pivot pivot) {
         this.pivot = pivot;
@@ -74,4 +74,5 @@ public class SetPivotPosition extends CommandBase{
     private boolean isPivotPastHalfwayPoint() {
         return controller.getGoal().position - controller.getSetpoint().position < (1/2) * initialDistanceToGoal;
     }
+    
 }

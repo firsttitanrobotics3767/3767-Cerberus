@@ -5,17 +5,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.SetArmPosition;
 import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
-import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
 import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
@@ -29,9 +25,9 @@ import frc.robot.utils.Dashboard;
 public class RobotContainer {
 
   public final Drivetrain drivetrain = new Drivetrain();
-  private final Pivot pivot = new Pivot(this);
-  private final Arm arm = new Arm();
-  private final Manipulator manipulator = new Manipulator();
+  public final Pivot pivot = new Pivot();
+  public final Arm arm = new Arm();
+  public final Manipulator manipulator = new Manipulator();
 
   public final Joystick driver = new Joystick(0);
   private final Joystick operator = new Joystick(1);
@@ -39,6 +35,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   public RobotContainer() {
+    pivot.arm = arm;
+    arm.pivot = pivot;
     CameraServer.startAutomaticCapture();
     configureBindings();
     pivot.setDefaultCommand(new supplyPivotSpeed(() -> -operator.getRawAxis(1), pivot));
@@ -61,6 +59,7 @@ public class RobotContainer {
     JoystickButton wristDown = new JoystickButton(operator, 8);
     JoystickButton requestCone = new JoystickButton(operator, 3);
     JoystickButton requestCube = new JoystickButton(operator, 2);
+    JoystickButton redLights = new JoystickButton(operator, 14);
     JoystickButton retractArm = new JoystickButton(operator, 15);
     JoystickButton homePivot = new JoystickButton(operator, 9);
     JoystickButton homeArm = new JoystickButton(operator, 10);
@@ -73,6 +72,7 @@ public class RobotContainer {
     wristDown.onTrue(new InstantCommand(() -> manipulator.wristDown()));
     requestCone.onTrue(new InstantCommand(() -> manipulator.requestCone()));
     requestCube.onTrue(new InstantCommand(() -> manipulator.requestCube()));
+    redLights.whileTrue(new RunCommand(() -> manipulator.updateRedPattern()));
     retractArm.onTrue(new AlternateHomeArm(pivot, arm));
     homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
     homeArm.onTrue(new HomeArm(pivot, arm));

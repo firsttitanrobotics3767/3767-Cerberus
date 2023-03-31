@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     m_robotContainer.drivetrain.differentialDrive.feed();
+    m_robotContainer.manipulator.updateRedPattern();
   }
 
   @Override
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.drivetrain.setDefaultCommand(new ArcadeDrive(() -> -m_robotContainer.driver.getRawAxis(1), () -> -m_robotContainer.driver.getRawAxis(2), m_robotContainer.drivetrain));
+    m_robotContainer.manipulator.requestCone();
 
   }
 
