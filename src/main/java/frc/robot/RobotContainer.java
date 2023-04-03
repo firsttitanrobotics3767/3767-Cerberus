@@ -5,13 +5,17 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.SetArmPosition;
 import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Pivot.HomePivot;
+import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
 import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
@@ -61,7 +65,7 @@ public class RobotContainer {
     JoystickButton requestCube = new JoystickButton(operator, 2);
     JoystickButton redLights = new JoystickButton(operator, 14);
     JoystickButton retractArm = new JoystickButton(operator, 15);
-    JoystickButton homePivot = new JoystickButton(operator, 9);
+    // JoystickButton homePivot = new JoystickButton(operator, 9);
     JoystickButton homeArm = new JoystickButton(operator, 10);
     
 
@@ -74,18 +78,19 @@ public class RobotContainer {
     requestCube.onTrue(new InstantCommand(() -> manipulator.requestCube()));
     redLights.whileTrue(new RunCommand(() -> manipulator.updateRedPattern()));
     retractArm.onTrue(new AlternateHomeArm(pivot, arm));
-    homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
+    // homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
     homeArm.onTrue(new HomeArm(pivot, arm));
 
-    // new JoystickButton(operator, 1).whileTrue(new SetPivotPosition(0, pivot));
-    // new JoystickButton(operator, 4).whileTrue(new ParallelCommandGroup(new SetPivotPosition(0, pivot), new WaitUntilCommand(() -> pivot.getPivotPosition() > -20).andThen(new SetArmPosition(85, arm))));
-    // new JoystickButton(operator, 1).whileTrue(new ParallelCommandGroup(new SetArmPosition(0.2, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
+    new POVButton(operator, 270).whileTrue(new SetArmPosition(1, arm));
+    new POVButton(operator, 0).whileTrue(new SetPivotPosition(0, pivot));
+    new POVButton(operator, 90).whileTrue(new ParallelCommandGroup(new SetPivotPosition(0, pivot), new WaitUntilCommand(() -> pivot.getPivotPosition() > -20).andThen(new SetArmPosition(85, arm))));
+    new POVButton(operator, 180).whileTrue(new ParallelCommandGroup(new SetArmPosition(1, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
     new JoystickButton(operator, 1).whileTrue(new SetArmPosition(20, arm));
     new JoystickButton(operator, 4).whileTrue(new SetArmPosition(80, arm));
     
     
     
-    Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));
+    // Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));
     Dashboard.putSendable("Home Arm", new HomeArm(pivot, arm));
     Dashboard.putSendable("Reset Pivot", new InstantCommand(() -> pivot.resetPivotEncoder(84)).withName("Reset Pivot"));
     Dashboard.putSendable("ALTERNATE ARM", new AlternateHomeArm(pivot, arm));

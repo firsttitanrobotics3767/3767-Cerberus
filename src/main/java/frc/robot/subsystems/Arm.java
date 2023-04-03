@@ -25,14 +25,15 @@ public class Arm extends SubsystemBase {
     private final Encoder armEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
     public Boolean limitSwitchesEnabled = true, softLimitsEnabled = true;
-    public final Entry<Double> armVoltage, armPosition;
-    public double targetVolts = 0, volts = 0, forwardLimit = 84, reverseLimit = 0.5;
+    public final Entry<Double> armVoltage, armPosition, armVelocity;
+    public double targetVolts = 0, volts = 0, forwardLimit = 93, reverseLimit = 1;
     public Pivot pivot = null;
 
     public Arm() {
 
         armVoltage = Entry.getDoubleEntry("Arm Target Speed", 0);
         armPosition = Entry.getDoubleEntry("Arm Position", 0);
+        armVelocity = Entry.getDoubleEntry("Arm Velocity", 0);
 
         // Arm motor
         armMotor = new CANSparkMax(IDMap.CAN.arm.ID, MotorType.kBrushless);
@@ -42,7 +43,7 @@ public class Arm extends SubsystemBase {
 
         // Arm encoder
         armEncoder = new Encoder(IDMap.DIO.armEncoderA.port, IDMap.DIO.armEncoderB.port);
-        armEncoder.setDistancePerPulse(Constants.Arm.distancePerPulse);
+        armEncoder.setDistancePerPulse(Constants.Arm.kDistancePerPulse);
 
         // Arm limit switches
         forwardLimitSwitch = new DigitalInput(IDMap.DIO.armForawrdLimit.port);
@@ -65,11 +66,12 @@ public class Arm extends SubsystemBase {
         SmartDashboard.putBoolean("forward", isAbleToMoveForward());
         SmartDashboard.putBoolean("back", isAbleToMoveReverse());
         armVoltage.put(volts);
-        armPosition.put(armEncoder.getDistance());
+        armPosition.put(getArmPosition());
+        armVelocity.put(getArmVelocity());
     }
 
     // Motor methods
-    public void setArmVolts(double volts) {
+    public void setVolts(double volts) {
         targetVolts = (volts > 0.1 || volts < -0.1)? volts : 0;
     }
 
@@ -79,7 +81,7 @@ public class Arm extends SubsystemBase {
 
     // Encoder methods
     public double getArmPosition() {
-        return armEncoder.getDistance();
+        return -armEncoder.getDistance();
     }
 
     public double getArmVelocity() {
@@ -142,9 +144,9 @@ public class Arm extends SubsystemBase {
     public boolean isAbleToMoveForward() {
         return !(
             // If soft limit is enabled, check it. Otherwise assume limit is not exceeded.
-            softLimitsEnabled? getForwardLimitExceeded() : false ||
+            (softLimitsEnabled? getForwardLimitExceeded() : false) || 
             // If limit switch is enabled, check it. Otherwise, assume it is not pressed.
-            limitSwitchesEnabled? getForwardLimitSwitchPressed() : false
+            (limitSwitchesEnabled? getForwardLimitSwitchPressed() : false)
         );
     }
 
@@ -156,9 +158,9 @@ public class Arm extends SubsystemBase {
     public boolean isAbleToMoveReverse() {
         return !(
             // If soft limit is enabled, check it. Otherwise, assume limit is not exceeded.
-            softLimitsEnabled? getReverseLimitExceeded() : false ||
+            (softLimitsEnabled? getReverseLimitExceeded() : false) ||
             // If limit switch is enabled, check it. Otherwise, assume it is not pressed.
-            limitSwitchesEnabled? getReverseLimitSwitchPressed() : false
+            (limitSwitchesEnabled? getReverseLimitSwitchPressed() : false)
         );
     }
 

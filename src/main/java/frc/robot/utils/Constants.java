@@ -54,8 +54,9 @@ public class Constants {
         public static final double kMaxAccel = 500;
         /** Encoder revolution per second */
         public static final double kMaxVel = 100;
-        // (1 / 8192) * 20
+        // (1 / 8192) * 4 * 12 * (30/18)
         // this should be exactly the same distance that was read from the built in motor encoder
-        public static final double distancePerPulse = 0.00244140625;
+        public static final double kDistancePerPulse = 0.009765625;
+        public static final double kLowSpeed = -1;
     }
 }

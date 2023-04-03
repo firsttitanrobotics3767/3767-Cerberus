@@ -15,15 +15,15 @@ public class HomeArm extends SequentialCommandGroup{
             new InstantCommand(() -> {
                 arm.enableSoftlimits(false);
                 //TODO: get accurate acceptable angle
-                arm.setArmVolts(1);
+                arm.setVolts(1);
             }),
             new WaitCommand(0.5),
-            new InstantCommand(() -> arm.setArmVolts(-1)),
+            new InstantCommand(() -> arm.setVolts(-1)),
             new WaitUntilCommand(() -> arm.getReverseLimitSwitchPressed()),
             new InstantCommand(() -> {
-                arm.setArmVolts(0);
+                arm.setVolts(0);
                 arm.resetArmEncoder();
-                arm.setSoftLimits(93, 0.5);
+                arm.setSoftLimits(93, 1);
                 arm.enableSoftlimits(true);
             })
         );

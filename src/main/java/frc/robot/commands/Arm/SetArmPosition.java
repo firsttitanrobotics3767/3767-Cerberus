@@ -43,13 +43,13 @@ public class SetArmPosition extends CommandBase{
         //     hasAccelerationBeenChanged = true;
         // }
         double targetVolts = controller.calculate(arm.getArmPosition());
-        arm.setArmVolts(targetVolts);
+        arm.setVolts(targetVolts);
         SmartDashboard.putNumber("controller output", targetVolts);
     }
 
     @Override
     public void end(boolean isFinished) {
-        arm.setArmVolts(0);
+        arm.setVolts(0);
     }
 
     @Override
