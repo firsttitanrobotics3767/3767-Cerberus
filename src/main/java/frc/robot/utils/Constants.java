@@ -20,22 +20,38 @@ public class Constants {
         //TODO: calculate trackwidth
         public static final double trackWidthMeters = 0.65347;
         public static final double wheelDiameter = Units.inchesToMeters(6.25);
-        private static final double countsPerRev = 42;
+        private static final double countsPerRev = 42.0;
         // 11:62    18:34
         private static final double gearRatio = 10.64;   // 62(34/18)/11
-        public static final double CountsPerMeter = (gearRatio * countsPerRev) / wheelDiameter * Math.PI;
+        public static final double CountsPerMeter = 5644.3453431830814179397627568457;
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
 
-        /* degrees per second */
-        public static final double kMaxTurnVel = 180;
-        public static final double kMaxTurnAccel = 720;
+        public static class Drive {
+            public static final double kP = 0.04;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kS = 0.145;
+            public static final double kV = 1;
 
-        public static final double kP = 0.01;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kS = 0.2;
-        public static final double kV = 1;
+            public static final double kMaxDriveVel = 40;
+            public static final double kMaxDriveAccel = 200;
+        }
+
+        
+
+        public static class Turn {
+            public static final double kP = 0.01;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kS = 0.2;
+            public static final double kV = 1;
+
+            /* degrees per second */
+            public static final double kMaxTurnVel = 180;
+            public static final double kMaxTurnAccel = 720;
+        }
+        
     }
 
     public static class Pivot {

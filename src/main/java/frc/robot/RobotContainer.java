@@ -14,10 +14,12 @@ import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.SetArmPosition;
 import frc.robot.commands.Arm.supplyArmSpeed;
+import frc.robot.commands.Drivetrain.DriveMeters;
 import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
+import frc.robot.commands.auton.HighCubeMobility;
 import frc.robot.commands.auton.HighCube;
 import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
@@ -53,6 +55,7 @@ public class RobotContainer {
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
     autoChooser.addOption("High  Cube", new HighCube(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Balance", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("High Cube Mobility", new HighCubeMobility(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 
@@ -90,7 +93,7 @@ public class RobotContainer {
     new POVButton(operator, 180).whileTrue(new ParallelCommandGroup(new SetArmPosition(1, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
     new JoystickButton(operator, 1).whileTrue(new SetArmPosition(20, arm));
     new JoystickButton(operator, 4).whileTrue(new SetArmPosition(80, arm));
-    new JoystickButton(driver, 5).whileTrue(new TurnDegrees(0, drivetrain));
+    new JoystickButton(driver, 5).whileTrue(new DriveMeters(40, drivetrain));
     
     
     // Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));

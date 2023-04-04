@@ -79,8 +79,8 @@ public class Drivetrain extends SubsystemBase{
 
 
         // Drive Encoders
-        leftDriveEncoder = leftFront.getAlternateEncoder(8192);
-        rightDriveEncoder = rightFront.getAlternateEncoder(8192);
+        leftDriveEncoder = leftFront.getEncoder();
+        rightDriveEncoder = rightFront.getEncoder();
         resetEncoders();
 
         // Gyro
@@ -115,7 +115,8 @@ public class Drivetrain extends SubsystemBase{
     public void periodic() {
         SmartDashboard.putNumber("Gyro pitch", gyro.getPitch());
         SmartDashboard.putBoolean("on charging station", getGyroPitch() > 13);
-        SmartDashboard.putNumber("Gyro Yaw", getGyroYaw());
+        SmartDashboard.putNumber("Gyro Yaw", getGyroAngle());
+        SmartDashboard.putNumber("Average Meters", getAverageMeters());
     }
 
     // Drive methods
@@ -130,11 +131,17 @@ public class Drivetrain extends SubsystemBase{
 
     // Encoder Methods
     public double getLeftDistanceMeters() {
-        return leftDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+        // return leftDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+        return leftDriveEncoder.getPosition();
     }
 
     public double getRightDistanceMeters() {
-        return rightDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+        // return rightDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+        return rightDriveEncoder.getPosition();
+    }
+
+    public double getAverageMeters() {
+        return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2;
     }
 
     public double getLeftVelocityMetersPerSecond() {
@@ -160,8 +167,9 @@ public class Drivetrain extends SubsystemBase{
 
 
     // Gyro Methods
-    public double getGyroYaw() {
-        return gyro.getYaw();
+    public double getGyroAngle() {
+        // return gyro.getYaw();
+        return gyro.getAngle();
     }
 
     public double getGyroPitch() {
