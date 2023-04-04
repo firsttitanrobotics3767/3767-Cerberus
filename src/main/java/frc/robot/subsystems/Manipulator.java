@@ -87,11 +87,11 @@ public class Manipulator extends SubsystemBase {
         if (t == 0) {
             if (pos <= 0 || pos >= LEDPattern.length - 1) {dir *= -1;}
             pos += dir;
-            LEDPattern[pos] = 255 + 64;
+            LEDPattern[pos] = 255 + 32;
             for (int i = 0; i < LEDPattern.length; i++) {
-                LEDPattern[i] -= 64;
+                LEDPattern[i] -= 32;
                 if (LEDPattern[i] <= 0) {LEDPattern[i] = 0;}
-                buffer.setRGB(i, LEDPattern[i], 0, 0);
+                buffer.setRGB(i, 0, LEDPattern[i], 0);
             }
             led.setData(buffer);
         }

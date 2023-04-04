@@ -26,6 +26,16 @@ public class Constants {
         public static final double CountsPerMeter = (gearRatio * countsPerRev) / wheelDiameter * Math.PI;
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
+
+        /* degrees per second */
+        public static final double kMaxTurnVel = 180;
+        public static final double kMaxTurnAccel = 720;
+
+        public static final double kP = 0.01;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kS = 0.2;
+        public static final double kV = 1;
     }
 
     public static class Pivot {
