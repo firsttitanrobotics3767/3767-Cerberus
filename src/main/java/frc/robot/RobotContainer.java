@@ -51,7 +51,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("Forward balance", new ForwardBalance(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
-    autoChooser.addOption("High  Cube", new HighCube(pivot, arm, manipulator));
+    autoChooser.addOption("High  Cube", new HighCube(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Balance", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
