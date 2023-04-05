@@ -55,12 +55,15 @@ public class IDMap {
         rightDriveEncoderB(3),
 
         // Pivot
-        pivotForwardLimit(6),
-        pivotReverseLimit(5),
+        pivotForwardLimit(5),
+        pivotReverseLimit(6),
 
         // Arm
         armForawrdLimit(4),
         armReverseLimit(7),
+        armEncoderA(0),
+        armEncoderB(1),
+        armEncoderI(3),
 
         // Manipulator
         LEDs(9);

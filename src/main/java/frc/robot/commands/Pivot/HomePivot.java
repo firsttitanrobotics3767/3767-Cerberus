@@ -18,7 +18,7 @@ public class HomePivot extends SequentialCommandGroup {
                 // TODO: find acceptable limit for arm extension
                 manipulator.wristUp();
                 pivot.setPivotVolts(1);
-                arm.setArmVolts(-1);
+                arm.setVolts(-1);
             }),
             new WaitCommand(0.5),
             new InstantCommand(() -> pivot.setPivotVolts(-1)),

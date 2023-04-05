@@ -20,17 +20,42 @@ public class Constants {
         //TODO: calculate trackwidth
         public static final double trackWidthMeters = 0.65347;
         public static final double wheelDiameter = Units.inchesToMeters(6.25);
-        private static final double countsPerRev = 42;
+        private static final double countsPerRev = 42.0;
         // 11:62    18:34
         private static final double gearRatio = 10.64;   // 62(34/18)/11
-        public static final double CountsPerMeter = (gearRatio * countsPerRev) / wheelDiameter * Math.PI;
+        public static final double CountsPerMeter = 5644.3453431830814179397627568457;
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
+
+        public static class Drive {
+            public static final double kP = 0.04;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kS = 0.145;
+            public static final double kV = 1;
+
+            public static final double kMaxDriveVel = 40;
+            public static final double kMaxDriveAccel = 200;
+        }
+
+        
+
+        public static class Turn {
+            public static final double kP = 0.01;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double kS = 0.2;
+            public static final double kV = 1;
+
+            /* degrees per second */
+            public static final double kMaxTurnVel = 180;
+            public static final double kMaxTurnAccel = 720;
+        }
+        
     }
 
     public static class Pivot {
         public static final double kG = 0.19;
-        // public static final double kP = 0.0;
         public static final double kP = 0.5;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
@@ -47,10 +72,17 @@ public class Constants {
     }
 
     public static class Arm {
+        public static final double kG = 0.01;
         public static final double kP = 1;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+        /** Encoder revolutions per second squared */
         public static final double kMaxAccel = 500;
+        /** Encoder revolution per second */
         public static final double kMaxVel = 100;
+        // (1 / 8192) * 4 * 12 * (30/18)
+        // this should be exactly the same distance that was read from the built in motor encoder
+        public static final double kDistancePerPulse = 0.009765625;
+        public static final double kLowSpeed = -1;
     }
 }

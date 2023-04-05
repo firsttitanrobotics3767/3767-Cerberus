@@ -1,12 +1,10 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 // Vendor Libraries
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
@@ -15,27 +13,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.RobotContainer;
+
+// Utils
 import frc.robot.utils.Constants;
 import frc.robot.utils.Dashboard;
-// Utils
 import frc.robot.utils.IDMap;
 
 /** The rotation of the arm */
 public class Pivot extends SubsystemBase{
-    private final RobotContainer robotContainer;
     // Devices
     private final CANSparkMax pivotMotor;
     private final AbsoluteEncoder pivotEncoder;
     public final DigitalInput forwardLimitSwitch, reverseLimitSwitch;
-    public Boolean limitSwitchesEnabled = true, softLimitsEnabled = true, speedControl = false;
+    public Boolean limitSwitchesEnabled = true, softLimitsEnabled = true;
     public final Dashboard.Entry<Double> pivotSpeed, pivotPosition, pivotVoltage, pivotError, setpointDashboard;
     public double targetVolts = 0, volts = 0, forwardLimit = 20, reverseLimit = -83;
+    public Arm arm = null;
 
-    public Pivot(RobotContainer robotContainer) {
-
-        this.robotContainer = robotContainer;
-
+    public Pivot() {
         pivotSpeed = Dashboard.Entry.getDoubleEntry("Pivot Speed", 0);
         pivotPosition = Dashboard.Entry.getDoubleEntry("Pivot Position", 0);
         pivotVoltage = Dashboard.Entry.getDoubleEntry("Pivot Voltage", 0);
@@ -63,8 +58,7 @@ public class Pivot extends SubsystemBase{
     @Override
     public void periodic() {
         double gravityCompensation = Constants.Pivot.kG * Math.cos(Units.degreesToRadians(pivotEncoder.getPosition()));
-        volts = targetVolts;
-        volts += gravityCompensation;
+        volts = targetVolts + gravityCompensation;
         if (limitSwitchesEnabled || softLimitsEnabled) {
             if (isAbleToMoveForward() && isAbleToMoveReverse()) {
                 pivotMotor.setVoltage(volts);
@@ -77,24 +71,16 @@ public class Pivot extends SubsystemBase{
             }
                 
         } else {
-            pivotMotor.setVoltage(volts);
+            pivotMotor.setVoltage(0);
         }
         pivotVoltage.put(volts);
         pivotPosition.put(getPivotPosition());
-        pivotError.put(error);
         SmartDashboard.putNumber("Pivot current", pivotMotor.getOutputCurrent());
     }
 
     // Motor methods
     public void setPivotVolts(double volts) {
-        if (volts > 0.05 || volts < -0.05) {
-            speedControl = true;
-            targetVolts = volts;
-        } else {
-            speedControl = false;
-            targetVolts = 0;
-        }
-
+        targetVolts = (volts > 0.05 || volts < -0.05)? volts : 0;
     }
 
     public void setPivotDashboard() {
@@ -141,13 +127,13 @@ public class Pivot extends SubsystemBase{
     }
 
     public boolean getReverseLimitExceeded() {
-        return getPivotPosition < reverseLimit;
+        return getPivotPosition() < reverseLimit;
     }
 
     public boolean isAbleToMoveForward() {
         return !(
             getForwardLimitExceeded() ||
-            getForwardLimitSwitchPressed
+            getForwardLimitSwitchPressed()
         );
     }
 
