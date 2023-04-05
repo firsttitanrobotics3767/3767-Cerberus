@@ -20,6 +20,7 @@ import frc.robot.commands.Pivot.HomePivot;
 import frc.robot.commands.Pivot.SetPivotPosition;
 import frc.robot.commands.Pivot.supplyPivotSpeed;
 import frc.robot.commands.auton.HighCubeMobility;
+import frc.robot.commands.auton.HighCubeMobilityReverse;
 import frc.robot.commands.auton.HighCube;
 import frc.robot.commands.auton.HighCubeBalance;
 import frc.robot.commands.auton.balance.ForwardBalance;
@@ -55,7 +56,8 @@ public class RobotContainer {
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
     autoChooser.addOption("High  Cube", new HighCube(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Balance", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
-    autoChooser.addOption("High Cube Mobility", new HighCubeMobility(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("Right High Cube Mobility", new HighCubeMobility(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("Left High Cube Mobility", new HighCubeMobilityReverse(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
 
@@ -83,6 +85,7 @@ public class RobotContainer {
     requestCone.onTrue(new InstantCommand(() -> manipulator.requestCone()));
     requestCube.onTrue(new InstantCommand(() -> manipulator.requestCube()));
     redLights.whileTrue(new RunCommand(() -> manipulator.updateRedPattern()));
+    redLights.onFalse(new InstantCommand(() -> manipulator.requestCone()));
     retractArm.onTrue(new AlternateHomeArm(pivot, arm));
     // homePivot.onTrue(new HomePivot(pivot, arm, manipulator));
     homeArm.onTrue(new HomeArm(pivot, arm));
