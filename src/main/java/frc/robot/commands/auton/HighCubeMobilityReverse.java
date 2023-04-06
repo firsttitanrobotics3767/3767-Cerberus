@@ -16,18 +16,17 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Manipulator;
 import frc.robot.subsystems.Pivot;
 
-public class HighCubeMobility extends SequentialCommandGroup{
+public class HighCubeMobilityReverse extends SequentialCommandGroup{
     private final Drivetrain drivetrain;
     private final Pivot pivot;
     private final Arm arm;
     private final Manipulator manipulator;
-    private boolean onChargingStation = false;
      /**
      * <p><b>Start:</b> Facing cube node
      * 
      * <p><b>Score:</b> High cube, mobility, ready for cone
      */
-    public HighCubeMobility(Drivetrain drivetrain, Pivot pivot, Arm arm, Manipulator manipulator) {
+    public HighCubeMobilityReverse(Drivetrain drivetrain, Pivot pivot, Arm arm, Manipulator manipulator) {
         this.drivetrain = drivetrain;
         this.pivot = pivot;
         this.arm = arm;
@@ -35,8 +34,8 @@ public class HighCubeMobility extends SequentialCommandGroup{
         addRequirements(drivetrain, pivot, arm, manipulator);
         addCommands(
             new AlternateHomeArm(pivot, arm).alongWith(
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0))),
-            new WaitCommand(0.2),
+            new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)).andThen(
+            new WaitCommand(0.2))),
             new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)),
             (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15),
             (new SetArmPosition(85, arm).withTimeout(1)).alongWith(new InstantCommand(() -> manipulator.wristDown())),
@@ -46,9 +45,9 @@ public class HighCubeMobility extends SequentialCommandGroup{
             new SetArmPosition(0, arm).withTimeout(1.1),
             new SetPivotPosition(-80, pivot).withTimeout(1),
 
-            new TurnDegrees(7, drivetrain),
+            new TurnDegrees(-7, drivetrain),
             new DriveMeters(-80, drivetrain),
-            new TurnDegrees(172, drivetrain),
+            new TurnDegrees(-172, drivetrain),
             new SetPivotPosition(-56, pivot).withTimeout(1),
             new SetArmPosition(40, arm).withTimeout(1)
         );
