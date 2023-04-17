@@ -25,6 +25,7 @@ public class SetArmPosition extends CommandBase{
             Constants.Arm.kI,
             Constants.Arm.kD,
             constraints);
+        controller.setTolerance(0.5);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class SetArmPosition extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return false;
+        return controller.atGoal();
     }
 
     /**

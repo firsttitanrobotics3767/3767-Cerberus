@@ -20,7 +20,7 @@ public class HighCubeBalance extends SequentialCommandGroup{
     private final Manipulator manipulator;
     private boolean onChargingStation = false;
      /**
-     * <p><b>Start:</b> Facing cube node
+     * <p><b>Start:</b> Facing center cube node
      * 
      * <p><b>Score:</b> High cube, engage
      */

@@ -25,6 +25,7 @@ public class SetPivotPosition extends CommandBase{
             Constants.Pivot.kI,
             Constants.Pivot.kD,
             constraints);
+        controller.setTolerance(0.3);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class SetPivotPosition extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        return false;
+        return controller.atGoal();
     }
 
     /**
