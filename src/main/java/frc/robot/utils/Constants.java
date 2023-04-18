@@ -35,6 +35,7 @@ public class Constants {
             public static final double kV = 1;
 
             public static final double kMaxDriveVel = 40;
+            public static final double kSlowVel = 10;
             public static final double kMaxDriveAccel = 200;
         }
 

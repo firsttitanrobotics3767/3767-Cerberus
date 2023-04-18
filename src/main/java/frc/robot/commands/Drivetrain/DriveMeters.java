@@ -30,6 +30,21 @@ public class DriveMeters extends CommandBase {
         controller.setTolerance(0.5);
     }
 
+    public DriveMeters(double targetMeters, Drivetrain drivetrain, double velocity, double acceleration) {
+        this.drivetrain = drivetrain;
+        this.targetMeters = targetMeters;
+        addRequirements(drivetrain);
+        constraints = new TrapezoidProfile.Constraints(velocity, acceleration);
+        controller = new ProfiledPIDController(
+            Constants.Drivetrain.Drive.kP,
+            Constants.Drivetrain.Drive.kI,
+            Constants.Drivetrain.Drive.kD,
+            constraints);
+
+        feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.Drive.kS, Constants.Drivetrain.Drive.kV);
+        controller.setTolerance(0.5);
+    }
+
     @Override
     public void initialize() {
         // drivetrain.resetEncoders();
@@ -47,10 +62,23 @@ public class DriveMeters extends CommandBase {
     @Override
     public void end(boolean isInterrupted) {
         drivetrain.arcadeDrive(0, 0);
+        resetConstraints();
     }
 
     @Override
     public boolean isFinished() {
         return controller.atGoal();
+    }
+
+    public void setConstraints(double velocity, double acceleration) {
+        controller.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
+    }
+
+    public void resetConstraints() {
+        controller.setConstraints(constraints);
+    }
+
+    public void setNewGoal(double targetMeters) {
+        controller.setGoal(drivetrain.getAverageMeters() + targetMeters);
     }
 }
