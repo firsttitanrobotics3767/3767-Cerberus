@@ -26,6 +26,7 @@ public class TurnDegrees extends CommandBase {
             Constants.Drivetrain.Turn.kD,
             constraints);
         controller.enableContinuousInput(-180, 180);
+        controller.setTolerance(0.1);
 
         feedforward = new SimpleMotorFeedforward(Constants.Drivetrain.Turn.kS, Constants.Drivetrain.Turn.kV);
     }

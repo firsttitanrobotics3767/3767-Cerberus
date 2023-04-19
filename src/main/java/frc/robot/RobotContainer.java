@@ -98,10 +98,8 @@ public class RobotContainer {
     new POVButton(operator, 180).whileTrue(new ParallelCommandGroup(new SetArmPosition(1, arm), new WaitUntilCommand(() -> arm.getArmPosition() < 20).andThen(new SetPivotPosition(-70, pivot))));
     new JoystickButton(operator, 1).whileTrue(new SetArmPosition(20, arm));
     new JoystickButton(operator, 4).whileTrue(new SetArmPosition(80, arm));
-
-    new JoystickButton(driver, 1).onTrue(new InstantCommand(() -> drivetrain.resetGyro()));
-    new JoystickButton(driver, 2).onTrue(new InstantCommand(() -> drivetrain.resetEncoders()));
-    new JoystickButton(driver, 5).whileTrue(new HighCubeMobilityBalance(drivetrain, pivot, arm, manipulator));
+    new JoystickButton(driver, 5).whileTrue(new InstantCommand(() -> drivetrain.resetGyro()));
+    new JoystickButton(driver, 6).whileTrue(new TurnDegrees(40, drivetrain).andThen(new SetPivotPosition(-56, pivot)));
     
     
     // Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));
