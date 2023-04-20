@@ -14,6 +14,7 @@ import frc.robot.commands.Arm.AlternateHomeArm;
 import frc.robot.commands.Arm.HomeArm;
 import frc.robot.commands.Arm.SetArmPosition;
 import frc.robot.commands.Arm.supplyArmSpeed;
+import frc.robot.commands.Drivetrain.ArcadeDrive;
 import frc.robot.commands.Drivetrain.DriveMeters;
 import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.commands.Pivot.HomePivot;
@@ -40,7 +41,7 @@ public class RobotContainer {
   public final Manipulator manipulator = new Manipulator();
 
   public final Joystick driver = new Joystick(0);
-  private final Joystick operator = new Joystick(1);
+  public final Joystick operator = new Joystick(1);
 
   private final SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
@@ -49,16 +50,14 @@ public class RobotContainer {
     arm.pivot = pivot;
     CameraServer.startAutomaticCapture();
     configureBindings();
-    pivot.setDefaultCommand(new supplyPivotSpeed(() -> -operator.getRawAxis(1), pivot));
-    arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
 
     autoChooser.setDefaultOption("Forward balance", new ForwardBalance(drivetrain));
     autoChooser.addOption("Empty", new InstantCommand());
     autoChooser.addOption("Reverse Balance", new ReverseBalance(drivetrain));
     autoChooser.addOption("High  Cube", new HighCube(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Balance", new HighCubeBalance(drivetrain, pivot, arm, manipulator));
-    autoChooser.addOption("Right High Cube Mobility", new HighCubeMobility(drivetrain, pivot, arm, manipulator));
-    autoChooser.addOption("Left High Cube Mobility", new HighCubeMobilityReverse(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("Left High Cube Mobility", new HighCubeMobility(drivetrain, pivot, arm, manipulator));
+    autoChooser.addOption("Right High Cube Mobility", new HighCubeMobilityReverse(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Mobility Balance", new HighCubeMobilityBalance(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
   }
@@ -99,7 +98,7 @@ public class RobotContainer {
     new JoystickButton(operator, 1).whileTrue(new SetArmPosition(20, arm));
     new JoystickButton(operator, 4).whileTrue(new SetArmPosition(80, arm));
     new JoystickButton(driver, 5).whileTrue(new InstantCommand(() -> drivetrain.resetGyro()));
-    new JoystickButton(driver, 6).whileTrue(new TurnDegrees(40, drivetrain).andThen(new SetPivotPosition(-56, pivot)));
+    new JoystickButton(driver, 6).whileTrue(new DriveMeters(40, drivetrain));
     
     
     // Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));
@@ -110,5 +109,12 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+  }
+
+  public void setDefaultCommands() {
+    drivetrain.setDefaultCommand(new ArcadeDrive(() -> -driver.getRawAxis(1), () -> -driver.getRawAxis(2), drivetrain));
+    manipulator.requestCone();
+    pivot.setDefaultCommand(new supplyPivotSpeed(() -> -operator.getRawAxis(1), pivot));
+    arm.setDefaultCommand(new supplyArmSpeed(() -> -operator.getRawAxis(5), arm));
   }
 }
