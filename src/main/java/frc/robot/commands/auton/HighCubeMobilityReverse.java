@@ -35,8 +35,8 @@ public class HighCubeMobilityReverse extends SequentialCommandGroup{
         addCommands(
             new AlternateHomeArm(pivot, arm).alongWith(
             new InstantCommand(() -> drivetrain.arcadeDrive(-0.35, 0)).andThen(
-            new WaitCommand(0.2))),
-            new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)),
+            new WaitCommand(0.2)).andThen(
+            new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)))),
             (new SetPivotPosition(0, pivot).alongWith(new SetArmPosition(0, arm))).withTimeout(1.15),
             (new SetArmPosition(85, arm).withTimeout(1)).alongWith(new InstantCommand(() -> manipulator.wristDown())),
             new InstantCommand(() -> manipulator.openPincher()),
@@ -45,9 +45,9 @@ public class HighCubeMobilityReverse extends SequentialCommandGroup{
             new SetArmPosition(0, arm).withTimeout(1.1),
             new SetPivotPosition(-80, pivot).withTimeout(1),
 
-            new TurnDegrees(-7, drivetrain),
+            new TurnDegrees(-7, drivetrain).withTimeout(2),
             new DriveMeters(-80, drivetrain),
-            new TurnDegrees(-172, drivetrain),
+            new TurnDegrees(-172, drivetrain).withTimeout(2),
             new SetPivotPosition(-56, pivot).withTimeout(1),
             new SetArmPosition(40, arm).withTimeout(1)
         );

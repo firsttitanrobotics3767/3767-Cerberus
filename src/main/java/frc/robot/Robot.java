@@ -1,9 +1,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Arm.supplyArmSpeed;
 import frc.robot.commands.Drivetrain.ArcadeDrive;
+import frc.robot.commands.Pivot.supplyPivotSpeed;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -18,6 +21,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    if (m_robotContainer.drivetrain.getCurrentCommand() != null) {
+      SmartDashboard.putString("Current Command", m_robotContainer.drivetrain.getCurrentCommand().getName());
+    }
   }
 
   @Override
@@ -52,11 +58,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-    m_robotContainer.drivetrain.setDefaultCommand(new ArcadeDrive(() -> -m_robotContainer.driver.getRawAxis(1), () -> -m_robotContainer.driver.getRawAxis(2), m_robotContainer.drivetrain));
-    m_robotContainer.manipulator.requestCone();
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.cancel();
+    // }
+    CommandScheduler.getInstance().cancelAll();
+    m_robotContainer.setDefaultCommands();
 
   }
 

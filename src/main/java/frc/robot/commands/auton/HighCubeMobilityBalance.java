@@ -94,12 +94,12 @@ public class HighCubeMobilityBalance extends SequentialCommandGroup{
                 balanceDriveCommand,
                 new SequentialCommandGroup(
                     new WaitUntilCommand(() -> drivetrain.getGyroPitch() > 13),
-                    new InstantCommand(() -> {balanceDriveCommand.setNewGoal(33); balanceDriveCommand.setConstraints(20, 300);}),
+                    new InstantCommand(() -> {balanceDriveCommand.setNewGoal(27); balanceDriveCommand.setConstraints(10, 300);}),
                     new WaitUntilCommand(() -> drivetrain.getGyroPitch() < 6)
                 )
             ),
-            new InstantCommand(() -> drivetrain.arcadeDrive(-0.3, 0))
-                    .andThen(new WaitCommand(0.2))
+            new InstantCommand(() -> {drivetrain.arcadeDrive(-0.3, 0); balanceDriveCommand.end(false);})
+                    .andThen(new WaitCommand(0.5))
                     .andThen(new InstantCommand(() -> drivetrain.arcadeDrive(0, 0)))
         );
     }
