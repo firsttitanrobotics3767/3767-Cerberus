@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import com.pathplanner.lib.PathConstraints;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,11 +23,16 @@ public class Constants {
         public static final double trackWidthMeters = 0.65347;
         public static final double wheelDiameter = Units.inchesToMeters(6.25);
         private static final double countsPerRev = 42.0;
+        /* The gyro is producing innaccurate values, so this coefficient is applied in the getGyroYaw method */
+        public static final double gyroAdjustment = 0.92783505;
+
         // 11:62    18:34
         private static final double gearRatio = 10.64;   // 62(34/18)/11
-        public static final double CountsPerMeter = 5644.3453431830814179397627568457;
+        public static final double metersPerRev = 0.0468876798;
 
         public static final DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(trackWidthMeters);
+
+        public static final PathConstraints pathConstraints = new PathConstraints(1, 5);
 
         public static class Drive {
             public static final double kP = 0.04;
@@ -39,8 +46,6 @@ public class Constants {
             public static final double kMaxDriveAccel = 200;
         }
 
-        
-
         public static class Turn {
             public static final double kP = 0.01;
             public static final double kI = 0.0;
@@ -51,6 +56,13 @@ public class Constants {
             /* degrees per second */
             public static final double kMaxTurnVel = 180;
             public static final double kMaxTurnAccel = 720;
+        }
+
+        public static class Trajectory {
+            public static final double kS = 0.2;
+            public static final double kV = 2;
+            public static final double kLeftP = 0.1;
+            public static final double kRightP = 0;
         }
         
     }

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -61,6 +63,9 @@ public class RobotContainer {
     autoChooser.addOption("Left High Cube Mobility", new HighCubeMobilityReverse(drivetrain, pivot, arm, manipulator));
     autoChooser.addOption("High Cube Mobility Balance", new HighCubeMobilityBalance(drivetrain, pivot, arm, manipulator));
     Dashboard.putSendable("Auto Chooser", autoChooser);
+
+    
+
   }
 
   private void configureBindings() {
@@ -102,6 +107,7 @@ public class RobotContainer {
     new JoystickButton(driver, 1).onTrue(new InstantCommand(() -> drivetrain.resetGyro()));
     new JoystickButton(driver, 2).onTrue(new InstantCommand(() -> drivetrain.resetEncoders()));
     new JoystickButton(driver, 5).whileTrue(new HighCubeMobilityBalance(drivetrain, pivot, arm, manipulator));
+    new JoystickButton(driver, 8).whileTrue(drivetrain.getRamseteCommand("testPath", true));
     
     
     // Dashboard.putSendable("Home Pivot", new HomePivot(pivot, arm, manipulator));

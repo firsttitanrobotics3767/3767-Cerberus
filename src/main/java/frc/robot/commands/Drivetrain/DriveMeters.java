@@ -48,13 +48,13 @@ public class DriveMeters extends CommandBase {
     @Override
     public void initialize() {
         // drivetrain.resetEncoders();
-        controller.reset(drivetrain.getAverageMeters());
-        controller.setGoal(drivetrain.getAverageMeters() + targetMeters);
+        controller.reset(drivetrain.getAverageRawPosition());
+        controller.setGoal(drivetrain.getAverageRawPosition() + targetMeters);
     }
 
     @Override
     public void execute() {
-        double targetSpeed = feedforward.calculate(controller.calculate(drivetrain.getAverageMeters()));
+        double targetSpeed = feedforward.calculate(controller.calculate(drivetrain.getAverageRawPosition()));
         drivetrain.arcadeDrive(targetSpeed, 0);
         SmartDashboard.putNumber("Drive Controller output", targetSpeed);
     }
@@ -79,6 +79,6 @@ public class DriveMeters extends CommandBase {
     }
 
     public void setNewGoal(double targetMeters) {
-        controller.setGoal(drivetrain.getAverageMeters() + targetMeters);
+        controller.setGoal(drivetrain.getAverageRawPosition() + targetMeters);
     }
 }

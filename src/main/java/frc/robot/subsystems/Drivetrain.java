@@ -7,6 +7,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlanner;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -15,15 +16,24 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // WPILib
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Utils
@@ -93,7 +103,7 @@ public class Drivetrain extends SubsystemBase{
         // Odometry
         differentialDrive = new DifferentialDrive(leftFront, rightFront);
         throttleLimiter = new SlewRateLimiter(Constants.Drivetrain.throttleLimiter);
-        odometry = new DifferentialDriveOdometry(getGyroRotation2d(), getLeftDistanceMeters(), getRightDistanceMeters());
+        odometry = new DifferentialDriveOdometry(getGyroRotation2d(), getLeftDistanceRaw(), getRightDistanceRaw());
         poseEstimator = new DifferentialDrivePoseEstimator(
             Constants.Drivetrain.driveKinematics,
             getGyroRotation2d(),
@@ -117,6 +127,10 @@ public class Drivetrain extends SubsystemBase{
         SmartDashboard.putBoolean("on charging station", getGyroPitch() > 13);
         SmartDashboard.putNumber("Gyro Yaw", getGyroAngle());
         SmartDashboard.putNumber("Average Meters", getAverageMeters());
+        odometry.update(getGyroRotation2d(), getLeftDistanceMeters(), getRightDistanceMeters());
+        field.setRobotPose(getPose2d());
+        SmartDashboard.putNumber("Chassis Speed", getLeftVelocityMetersPerSecond());
+        SmartDashboard.putNumber("Distance", getLeftDistanceMeters());
     }
 
     // Drive methods
@@ -128,16 +142,35 @@ public class Drivetrain extends SubsystemBase{
         differentialDrive.arcadeDrive(throttleLimiter.calculate(forwardSpeed), turnSpeed);
     }
 
+    public void tankDriveVolts(double leftVolts, double rightVolts) {
+        leftFront.setVoltage(leftVolts);
+        rightFront.setVoltage(rightVolts);
+        differentialDrive.feed();
+        SmartDashboard.putNumber("volts", rightVolts);
+    }
+
 
     // Encoder Methods
-    public double getLeftDistanceMeters() {
-        // return leftDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+    public double getLeftDistanceRaw() {
+        // return leftDriveEncoder.getPosition() * Constants.Drivetrain.metersPerRev;
         return leftDriveEncoder.getPosition();
     }
 
-    public double getRightDistanceMeters() {
-        // return rightDriveEncoder.getPosition() / Constants.Drivetrain.CountsPerMeter;
+    public double getRightDistanceRaw() {
+        // return rightDriveEncoder.getPosition() * Constants.Drivetrain.metersPerRev;
         return rightDriveEncoder.getPosition();
+    }
+
+    public double getLeftDistanceMeters() {
+        return leftDriveEncoder.getPosition() * Constants.Drivetrain.metersPerRev;
+    }
+
+    public double getRightDistanceMeters() {
+        return rightDriveEncoder.getPosition() * Constants.Drivetrain.metersPerRev;
+    }
+
+    public double getAverageRawPosition() {
+        return (getLeftDistanceRaw() + getRightDistanceRaw()) / 2;
     }
 
     public double getAverageMeters() {
@@ -145,11 +178,18 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public double getLeftVelocityMetersPerSecond() {
-        return leftDriveEncoder.getVelocity() / Constants.Drivetrain.CountsPerMeter;
+        return (leftDriveEncoder.getVelocity() * Constants.Drivetrain.metersPerRev) / 60;
     }
 
     public double getRightVelocityMetersPerSecond() {
-        return rightDriveEncoder.getVelocity() / Constants.Drivetrain.CountsPerMeter;
+        return (rightDriveEncoder.getVelocity() * Constants.Drivetrain.metersPerRev) / 60;
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+            getLeftVelocityMetersPerSecond(),
+            getRightVelocityMetersPerSecond()
+        );
     }
 
     public void setLeftEncoderPosition(double position) {
@@ -169,7 +209,7 @@ public class Drivetrain extends SubsystemBase{
     // Gyro Methods
     public double getGyroAngle() {
         // return gyro.getYaw();
-        return gyro.getAngle();
+        return gyro.getAngle() * Constants.Drivetrain.gyroAdjustment;
     }
 
     public double getGyroPitch() {
@@ -177,7 +217,7 @@ public class Drivetrain extends SubsystemBase{
     }
 
     public Rotation2d getGyroRotation2d() {
-        return gyro.getRotation2d();
+        return gyro.getRotation2d().times(Constants.Drivetrain.gyroAdjustment);
     }
 
     public void resetGyro() {
@@ -190,8 +230,31 @@ public class Drivetrain extends SubsystemBase{
         return odometry.getPoseMeters();
     }
 
+    public Command getRamseteCommand(String trajName, boolean resetPose) {
+        Trajectory traj = PathPlanner.loadPath(trajName, Constants.Drivetrain.pathConstraints);
+        SequentialCommandGroup commands = new SequentialCommandGroup();
+        if (resetPose) commands.addCommands(new InstantCommand(() -> setOdometry(traj.getInitialPose())));
+        commands.addCommands(new InstantCommand(() -> field.getObject("traj").setTrajectory(traj)));
+        
+
+        commands.addCommands(new RamseteCommand(
+            traj, 
+            this::getPose2d,
+            new RamseteController(2, 0.7),
+            new SimpleMotorFeedforward(
+                Constants.Drivetrain.Trajectory.kS,
+                Constants.Drivetrain.Trajectory.kV),
+            Constants.Drivetrain.driveKinematics,
+            this::getWheelSpeeds,
+            new PIDController(Constants.Drivetrain.Trajectory.kLeftP, 0.0, 0.0),
+            new PIDController(Constants.Drivetrain.Trajectory.kLeftP, 0.0, 0.0),
+            this::tankDriveVolts,
+            this));
+        return commands;
+    }
+
     public void updatePoseEstimate() {
-        poseEstimator.update(getGyroRotation2d(), getLeftDistanceMeters(), getRightDistanceMeters());
+        poseEstimator.update(getGyroRotation2d(), getLeftDistanceRaw(), getRightDistanceRaw());
         var result = getCameraResult();
         if (result.hasTargets()) {
             double imageCaptureTime = result.getTimestampSeconds();
