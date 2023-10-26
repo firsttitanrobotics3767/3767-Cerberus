@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+//logging
+
 // Vendor Libraries
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
